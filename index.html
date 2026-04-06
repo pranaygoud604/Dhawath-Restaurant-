@@ -5,185 +5,207 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dhawath Restaurant</title>
 
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-/* BACKGROUND */
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; }
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center/cover;
+  font-family: 'Poppins', sans-serif;
+  background: #0f0f0f;
   color: white;
-}
-
-/* OVERLAY */
-.overlay {
-  background: rgba(0,0,0,0.75);
-  min-height: 100vh;
-  padding: 20px;
 }
 
 /* HEADER */
 .header {
+  padding: 20px;
   text-align: center;
-  margin-bottom: 20px;
 }
 
-.header h1 {
-  font-size: 32px;
-}
+.header h1 { font-size: 24px; }
+.subtitle { color:#fc8019; font-size:12px; }
 
-.subtitle {
-  color: #f4b400;
-  letter-spacing: 3px;
-}
-
-/* TABLE INPUT */
+/* INPUT */
 input {
-  width: 300px;
-  padding: 12px;
-  border-radius: 10px;
+  width: 90%;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
   margin-top: 15px;
+  font-size: 16px;
 }
 
 /* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 30px;
+  grid-template-columns: repeat(2,1fr);
+  gap: 15px;
+  padding: 15px;
 }
 
 /* CARD */
 .item {
-  background: rgba(255,255,255,0.08);
-  padding: 20px;
-  border-radius: 15px;
+  background: #1c1c1c;
+  border-radius: 18px;
+  padding: 15px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 25px rgba(0,0,0,0.5);
-  transition: 0.3s;
-}
-
-.item:hover {
-  transform: scale(1.05);
-}
-
-/* ICON */
-.item img {
-  width: 40px;
-  margin-bottom: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
 
 /* TITLE */
-.item h3 {
-  margin-bottom: 5px;
-}
+.item h3 { margin-bottom:5px; }
 
 /* PRICE */
 .price {
-  color: #f4b400;
+  color:#fc8019;
+  font-weight:bold;
+}
+
+/* ADD BUTTON */
+.add-btn {
+  background: white;
+  color: green;
+  border: 2px solid green;
+  padding: 6px 16px;
+  border-radius: 8px;
   font-weight: bold;
+  margin-top:10px;
 }
 
-/* BUTTON */
-.item button {
-  margin-top: 10px;
-  background: linear-gradient(90deg, #f4b400, #ffcc33);
-  border: none;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
+/* QTY */
+.qty-control {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  background:white;
+  border-radius:8px;
+  padding:5px 10px;
+  margin-top:10px;
 }
 
-/* ORDER SECTION */
-.order-box {
-  margin-top: 30px;
-  text-align: center;
+.qty-control button {
+  border:none;
+  background:none;
+  font-size:18px;
+  color:green;
 }
 
-.total {
-  margin-top: 10px;
-  font-size: 20px;
+.qty-control span {
+  color:black;
+  font-weight:bold;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* CART BAR */
+.cart-bar {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  background: #1c1c1c;
+  border-radius: 15px;
+  padding: 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  display:none;
 }
+
+.cart-bar button {
+  background:#fc8019;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  color:white;
+}
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background:#333;
+  padding:10px 20px;
+  border-radius:20px;
+  display:none;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-
 <div class="header">
 <h1>Dhawath Restaurant</h1>
 <div class="subtitle">SCAN • ORDER • PAY</div>
-
 <input type="number" id="table" placeholder="Enter Table Number">
 </div>
 
 <div class="grid">
 
 <div class="item">
-<h3>Chicken Biryani</h3>
+<h3>🍗 Chicken Biryani</h3>
 <div class="price">₹180</div>
-<button onclick="changeQty('biryani',1)">Add to Order</button>
+<div id="control-biryani">
+<button class="add-btn" onclick="addItem('biryani')">ADD</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Mutton Biryani</h3>
+<h3>🍖 Mutton Biryani</h3>
 <div class="price">₹250</div>
-<button onclick="changeQty('mutton',1)">Add to Order</button>
+<div id="control-mutton">
+<button class="add-btn" onclick="addItem('mutton')">ADD</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Noodles</h3>
+<h3>🍜 Noodles</h3>
 <div class="price">₹120</div>
-<button onclick="changeQty('noodles',1)">Add to Order</button>
+<div id="control-noodles">
+<button class="add-btn" onclick="addItem('noodles')">ADD</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Burger</h3>
+<h3>🍔 Burger</h3>
 <div class="price">₹100</div>
-<button onclick="changeQty('burger',1)">Add to Order</button>
+<div id="control-burger">
+<button class="add-btn" onclick="addItem('burger')">ADD</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Fried Rice</h3>
+<h3>🍚 Fried Rice</h3>
 <div class="price">₹140</div>
-<button onclick="changeQty('rice',1)">Add to Order</button>
+<div id="control-rice">
+<button class="add-btn" onclick="addItem('rice')">ADD</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Shawarma</h3>
+<h3>🥙 Shawarma</h3>
 <div class="price">₹130</div>
-<button onclick="changeQty('shawarma',1)">Add to Order</button>
+<div id="control-shawarma">
+<button class="add-btn" onclick="addItem('shawarma')">ADD</button>
+</div>
 </div>
 
 </div>
 
-<div class="order-box">
-<h3>Your Order</h3>
-<div id="orderList">Your cart is empty</div>
-
-<div class="total">
-Total: ₹<span id="total">0</span>
+<!-- CART -->
+<div class="cart-bar" id="cartBar">
+<span id="cartCount"></span>
+<span>₹<span id="total">0</span></span>
+<button onclick="sendWhatsApp()">Place Order</button>
 </div>
 
-<button onclick="sendWhatsApp()">📱 Place Order</button>
-</div>
-
-</div>
+<div id="toast"></div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
