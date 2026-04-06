@@ -190,6 +190,12 @@ function updateStatus(id, status){
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
 }
+  // paid orders
+function markPaid(id){
+  db.ref("orders/"+id).update({
+    payment: "paid"
+  });
+}
 </script>
 
 </body>
