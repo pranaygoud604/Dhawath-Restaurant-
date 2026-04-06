@@ -1,57 +1,130 @@
-// 📦 PLACE ORDER (NO WHATSAPP)
-function placeOrder(){
+// 🔥 Firebase (ADD THIS FIRST)
+const firebaseConfig = {
+ apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+ authDomain: "dhawath-restaurant.firebaseapp.com",
+ databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+};
 
-  let table = document.getElementById("table").value;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  let total = 0;
-  let filteredItems = {};
+// 🛒 CART
+let cart = {
+ biryani:{name:"Chicken Biryani",price:180,qty:0},
+ mutton:{name:"Mutton Biryani",price:250,qty:0},
+ noodles:{name:"Noodles",price:120,qty:0},
+ burger:{name:"Burger",price:100,qty:0},
+ rice:{name:"Fried Rice",price:140,qty:0},
+ shawarma:{name:"Shawarma",price:130,qty:0}
+};
 
-  // 🔥 FILTER ITEMS
-  for(let key in cart){
+// 🔔 TOAST SAFE
+function showToast(msg){
+ let t=document.getElementById("toast");
+ if(!t) return; // prevent crash
 
-    let item = cart[key];
+ t.innerText=msg;
+t.style.display="block";
 
-    if(item.qty > 0){
+ setTimeout(()=>t.style.display="none",2000);
+}
 
-      total += item.price * item.qty;
+// ➕ ADD ITEM
+function addItem(item){
+ cart[item].qty=1;
+ updateControls(item);
+ updateTotal();
+ showToast("Added "+cart[item].name);
+}
 
-      filteredItems[key] = {
-        name: item.name,
-        qty: item.qty,
-        price: item.price
-      };
-    }
-  }
+// ➖➕ CHANGE QTY
+function changeQty(item,change){
+ cart[item].qty+=change;
 
-  // ❌ VALIDATION
-  if(!table || total === 0){
-    alert("Enter table & select items");
-    return;
-  }
+ if(cart[item].qty<=0){
+ cart[item].qty=0;
 
-  // 🔥 SAVE TO FIREBASE
-  db.ref("orders").push({
-    table: table,
-    items: filteredItems,
-    total: total,
-    status: "pending",
-    time: new Date().toLocaleString(),
-    timestamp: Date.now()
-  });
+ let el=document.getElementById("control-"+item);
+ if(el){
+ el.innerHTML =
+ `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
+ }
 
-  // ✅ SUCCESS MESSAGE
-  showToast("✅ Order Placed!");
+ } else {
+ updateControls(item);
+ }
 
-  // 🧹 CLEAR CART AFTER ORDER
-  for(let key in cart){
-    cart[key].qty = 0;
+ updateTotal();
+}
 
-    let el = document.getElementById("control-"+key);
-    if(el){
-      el.innerHTML = `<button class="add-btn" onclick="addItem('${key}')">ADD</button>`;
-    }
-  }
+// 🔄 UPDATE CONTROL UI SAFE
+function updateControls(item){
+ let el=document.getElementById("control-"+item);
+ if(!el) return;
 
-  // 🔄 RESET UI
-  updateTotal();
+ let q=cart[item].qty;
+
+ el.innerHTML = `
+ <div class="qty-control">
+ <button onclick="changeQty('${item}',-1)">−</button>
+ <span>${q}</span>
+ <button onclick="changeQty('${item}',1)">+</button>
+ </div>
+ `;
+}
+
+// 💰 TOTAL SAFE
+function updateTotal(){
+ let total=0,count=0;
+
+ for(let k in cart){
+ total+=cart[k].price*cart[k].qty;
+ count+=cart[k].qty;
+ }
+
+ let totalEl=document.getElementById("total");
+ let countEl=document.getElementById("cartCount");
+ let cartBar=document.getElementById("cartBar");
+
+ if(totalEl) totalEl.innerText=total;
+ if(countEl) countEl.innerText=count+" items";
+
+ if(cartBar){
+cartBar.style.display = count>0 ? "flex" : "none";
+ }
+}
+
+// 📦 ORDER
+function sendWhatsApp(){
+ let table=document.getElementById("table").value;
+
+ let total=0,text="";
+
+ for(let k in cart){
+ if(cart[k].qty>0){
+ let itemTotal=cart[k].price*cart[k].qty;
+ total+=itemTotal;
+ text+=cart[k].name+" - ₹"+itemTotal+"%0A";
+ }
+ }
+
+ if(!table || total===0){
+ alert("Enter table & select items");
+ return;
+ }
+
+ // SAVE FIREBASE
+ db.ref("orders").push({
+ table,
+ total,
+ status:"pending",
+ time:new Date().toLocaleString()
+ });
+
+ let msg =
+ "🍽️ *Table "+table+" Order*%0A%0A"+
+ text+
+ "%0ATotal: ₹"+total;
+
+window.open("https://wa.me/917330100133?text="+msg);
 }
