@@ -170,13 +170,40 @@ db.ref("orders").on("value", snapshot => {
         ${order.status}
       </div>
 
-      <div class="buttons">
-        <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
-        <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
-        <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
-      </div>
-    </div>`;
-  });
+      <div class="buttons" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+
+  <button class="cookBtn"
+    style="flex:1;background:#2196f3;color:white;font-weight:600;border-radius:8px;"
+    onclick="updateStatus('${id}','cooking')">
+    🍳 Cooking
+  </button>
+
+  <button class="doneBtn"
+    style="flex:1;background:#4caf50;color:white;font-weight:600;border-radius:8px;"
+    onclick="updateStatus('${id}','done')">
+    ✅ Done
+  </button>
+
+  ${
+    order.payment !== "paid"
+    ? `<button 
+        style="flex:1;background:#ff9800;color:white;font-weight:600;border-radius:8px;"
+        onclick="markPaid('${id}')">
+        💳 Mark Paid
+      </button>`
+    : `<button 
+        style="flex:1;background:#555;color:white;font-weight:600;border-radius:8px;">
+        ✔ Paid
+      </button>`
+  }
+
+  <button class="deleteBtn"
+    style="flex:1;background:#f44336;color:white;font-weight:600;border-radius:8px;"
+    onclick="deleteOrder('${id}')">
+    🗑 Delete
+  </button>
+
+</div>
 
   document.getElementById("orders").innerHTML = html;
 });
