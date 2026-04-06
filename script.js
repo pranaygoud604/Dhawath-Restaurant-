@@ -114,9 +114,17 @@ function sendWhatsApp(){
  }
 
  // SAVE FIREBASE
- db.ref("orders").push({
+ let filteredItems = {};
+
+for(let key in cart){
+  if(cart[key].qty > 0){
+    filteredItems[key] = cart[key];
+  }
+}
+
+db.ref("orders").push({
   table,
-  items: cart,
+  items: filteredItems,   // ✅ FIXED
   total,
   status: "pending",
   time: new Date().toLocaleString(),
