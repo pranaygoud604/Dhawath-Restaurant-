@@ -1,0 +1,13 @@
+#orderList {
+  margin-top: 10px;
+  text-align: left;
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+}
