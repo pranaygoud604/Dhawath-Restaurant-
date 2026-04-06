@@ -1,13 +1,115 @@
-#orderList {
-  margin-top: 10px;
-  text-align: left;
-  padding: 10px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  text-align: center;
+  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center/cover;
 }
 
-.order-item {
+.overlay {
+  background: rgba(0,0,0,0.85);
+  min-height: 100vh;
+  padding: 15px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+input {
+  width: 90%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+/* GRID FIX */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* CARD */
+.item {
+  background: rgba(255,255,255,0.08);
+  padding: 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+/* PRICE */
+.price {
+  color: #f4b400;
+  font-weight: bold;
+}
+
+/* QUANTITY FIX */
+.qty-box {
   display: flex;
-  justify-content: space-between;
-  margin: 5px 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.qty-box button {
+  background: #f4b400;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* TOTAL */
+.total {
+  margin-top: 15px;
+  font-size: 18px;
+}
+
+/* BUTTONS */
+.actions {
+  margin-top: 10px;
+}
+
+.actions button {
+  background: #f4b400;
+  border: none;
+  padding: 10px 12px;
+  margin: 5px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* 📱 MOBILE FIX */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .item {
+    padding: 10px;
+  }
+
+  .qty-box button {
+    padding: 5px 8px;
+  }
+}
+
+/* 📱 EXTRA SMALL (perfect mobile) */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions button {
+    display: block;
+    width: 90%;
+    margin: 8px auto;
+  }
 }
