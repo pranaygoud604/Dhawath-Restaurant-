@@ -293,6 +293,9 @@ function markPaid(id){
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
 }
+function openReports(){
+  window.location.href = "reports.html";
+}
 </script>
 
 </body>
