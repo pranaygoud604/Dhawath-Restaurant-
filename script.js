@@ -105,7 +105,7 @@ function sendWhatsApp(){
                 + text
                 + "Total: ₹"+total;
 
-  window.open("https://wa.me/917330100133?text="+finalText, "_blank");
+  window.open("https://wa.me/+917330100133?text="+finalText, "_blank");
 
   clearCart();
 }
