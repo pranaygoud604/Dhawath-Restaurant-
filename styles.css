@@ -8,7 +8,7 @@
 /* BODY */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #111; /* 🔥 dark app style */
+  background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
   color: white;
 }
 
@@ -16,36 +16,40 @@ body {
 .overlay {
   max-width: 500px;
   margin: auto;
-  padding: 15px;
+  padding: 20px 15px;
 }
 
 /* HEADER */
 h1 {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: left;
 }
 
 .subtitle {
   font-size: 12px;
   color: #aaa;
   margin-bottom: 15px;
+  text-align: left;
 }
 
 /* INPUT */
 input {
   width: 100%;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
   margin: 10px 0 20px;
-  font-size: 14px;
+  font-size: 15px;
+  background: #2a2a2a;
+  color: white;
 }
 
-/* GRID */
+/* LIST */
 .grid {
   display: flex;
-  flex-direction: column;   /* 🔥 Swiggy uses vertical list */
-  gap: 12px;
+  flex-direction: column;
+  gap: 14px;
 }
 
 /* CARD */
@@ -53,20 +57,25 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1c1c1c;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  background: linear-gradient(145deg, #1c1c1c, #222);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  transition: 0.2s;
 }
 
-/* LEFT SIDE */
+.item:active {
+  transform: scale(0.98);
+}
+
+/* LEFT */
 .item-info {
   text-align: left;
 }
 
 .item h3 {
-  font-size: 15px;
-  margin-bottom: 5px;
+  font-size: 16px;
+  margin-bottom: 4px;
 }
 
 .price {
@@ -74,79 +83,88 @@ input {
   color: #bbb;
 }
 
-/* RIGHT SIDE BUTTON */
+/* BUTTON AREA */
 .qty-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* BUTTON STYLE (SWIGGY ADD STYLE) */
+/* BUTTON STYLE */
 .qty-box button {
-  background: white;
-  color: #28a745;
-  border: 1px solid #28a745;
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: white;
   font-weight: bold;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 14px;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 16px;
+  min-width: 36px;
+  transition: 0.2s;
+}
+
+.qty-box button:active {
+  background: #fc8019;
+  color: white;
+  border-color: #fc8019;
 }
 
 /* COUNT */
 .qty-box span {
-  font-size: 14px;
-  min-width: 20px;
-  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
 }
 
-/* ORDER SECTION */
+/* ORDER */
 #orderList {
   margin-top: 15px;
   font-size: 13px;
-  text-align: left;
   color: #ccc;
+  text-align: left;
 }
 
 /* TOTAL */
 .total {
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
 }
 
-/* FLOATING ACTION BAR */
+/* FLOATING ACTION */
 .actions {
   position: sticky;
   bottom: 0;
   background: #111;
-  padding: 10px;
+  padding: 10px 0;
 }
 
-/* BUTTONS */
+/* MAIN BUTTON */
 .actions button {
   width: 100%;
-  background: #fc8019; /* 🔥 Swiggy orange */
+  background: linear-gradient(90deg, #fc8019, #ff9f43);
   border: none;
-  padding: 12px;
+  padding: 14px;
   margin-top: 8px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 15px;
   font-weight: bold;
   color: white;
+  box-shadow: 0 4px 15px rgba(252,128,25,0.4);
 }
 
 /* CLEAR BUTTON */
 .actions button:last-child {
-  background: #444;
+  background: #333;
+  box-shadow: none;
 }
 
-/* MOBILE PERFECT */
+/* MOBILE */
 @media (max-width: 480px) {
   h1 {
     font-size: 20px;
   }
 
   .item {
-    padding: 10px;
+    padding: 12px;
   }
 }
