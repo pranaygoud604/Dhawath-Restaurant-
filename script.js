@@ -1,5 +1,14 @@
+// 🔥 Firebase (ADD THIS FIRST)
+const firebaseConfig = {
+  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+};
 
-// CART
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// 🛒 CART
 let cart = {
   biryani:{name:"Chicken Biryani",price:180,qty:0},
   mutton:{name:"Mutton Biryani",price:250,qty:0},
@@ -9,15 +18,18 @@ let cart = {
   shawarma:{name:"Shawarma",price:130,qty:0}
 };
 
-// TOAST
+// 🔔 TOAST SAFE
 function showToast(msg){
   let t=document.getElementById("toast");
+  if(!t) return; // prevent crash
+
   t.innerText=msg;
   t.style.display="block";
+
   setTimeout(()=>t.style.display="none",2000);
 }
 
-// ADD
+// ➕ ADD ITEM
 function addItem(item){
   cart[item].qty=1;
   updateControls(item);
@@ -25,14 +37,19 @@ function addItem(item){
   showToast("Added "+cart[item].name);
 }
 
-// CHANGE
+// ➖➕ CHANGE QTY
 function changeQty(item,change){
   cart[item].qty+=change;
 
   if(cart[item].qty<=0){
     cart[item].qty=0;
-    document.getElementById("control-"+item).innerHTML=
-      `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
+
+    let el=document.getElementById("control-"+item);
+    if(el){
+      el.innerHTML =
+        `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
+    }
+
   } else {
     updateControls(item);
   }
@@ -40,19 +57,23 @@ function changeQty(item,change){
   updateTotal();
 }
 
-// CONTROL UI
+// 🔄 UPDATE CONTROL UI SAFE
 function updateControls(item){
+  let el=document.getElementById("control-"+item);
+  if(!el) return;
+
   let q=cart[item].qty;
 
-  document.getElementById("control-"+item).innerHTML=`
+  el.innerHTML = `
     <div class="qty-control">
       <button onclick="changeQty('${item}',-1)">−</button>
       <span>${q}</span>
       <button onclick="changeQty('${item}',1)">+</button>
-    </div>`;
+    </div>
+  `;
 }
 
-// TOTAL
+// 💰 TOTAL SAFE
 function updateTotal(){
   let total=0,count=0;
 
@@ -61,14 +82,19 @@ function updateTotal(){
     count+=cart[k].qty;
   }
 
-  document.getElementById("total").innerText=total;
-  document.getElementById("cartCount").innerText=count+" items";
+  let totalEl=document.getElementById("total");
+  let countEl=document.getElementById("cartCount");
+  let cartBar=document.getElementById("cartBar");
 
-  document.getElementById("cartBar").style.display =
-    count>0 ? "flex" : "none";
+  if(totalEl) totalEl.innerText=total;
+  if(countEl) countEl.innerText=count+" items";
+
+  if(cartBar){
+    cartBar.style.display = count>0 ? "flex" : "none";
+  }
 }
 
-// ORDER
+// 📦 ORDER
 function sendWhatsApp(){
   let table=document.getElementById("table").value;
 
@@ -87,6 +113,7 @@ function sendWhatsApp(){
     return;
   }
 
+  // SAVE FIREBASE
   db.ref("orders").push({
     table,
     total,
@@ -94,7 +121,7 @@ function sendWhatsApp(){
     time:new Date().toLocaleString()
   });
 
-  let msg=
+  let msg =
     "🍽️ *Table "+table+" Order*%0A%0A"+
     text+
     "%0ATotal: ₹"+total;
