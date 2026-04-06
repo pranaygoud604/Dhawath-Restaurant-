@@ -109,12 +109,13 @@ function placeOrder(){
 
   if(db){
     db.ref("orders").push({
-      table,
-      items:filteredItems,
-      total,
-      status:"pending",
-      time:new Date().toLocaleString(),
-      timestamp:Date.now()
+  table,
+  items: filteredItems,
+  total,
+  status: "pending",
+  payment: "unpaid",   // 👈 ADD THIS
+  time: new Date().toLocaleString(),
+  timestamp: Date.now()
     });
   }
 
