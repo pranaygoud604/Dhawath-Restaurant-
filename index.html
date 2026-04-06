@@ -202,7 +202,7 @@ function placeOrder() {
   localStorage.setItem("orders", JSON.stringify(orders));
 
   // WhatsApp
-  window.open("https://wa.me/91XXXXXXXXXX?text=" + msg);
+  window.open("https://wa.me/917330100133?text=" + msg);
 }
 
 // UPI payment + mark paid
@@ -224,7 +224,7 @@ function payNow() {
 
   localStorage.setItem("orders", JSON.stringify(orders));
 
-  let upi = "upi://pay?pa=yourupiid@upi&pn=DhawathRestaurant&am=" + total + "&cu=INR";
+  let upi = "vickysiris2@ybl=" + total + "&cu=INR";
 
   window.open(upi);
 }
