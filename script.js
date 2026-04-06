@@ -1,13 +1,13 @@
-// 🔥 Firebase config (PASTE YOUR VALUES HERE)
+// 🔥 Firebase config (FIXED)
 const firebaseConfig = {
   apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
   authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com",
   projectId: "dhawath-restaurant",
   storageBucket: "dhawath-restaurant.firebasestorage.app",
   messagingSenderId: "896647998152",
   appId: "1:896647998152:web:472c242233b07eea53d3fd",
   measurementId: "G-GH9496VVXZ"
-  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com",
 };
 
 // Initialize Firebase
@@ -24,7 +24,7 @@ let cart = {
   drinks:{name:"Cool Drinks",price:40,qty:0}
 };
 
-// ➕➖ Quantity Change
+// ➕➖ Quantity
 function changeQty(item, change){
   cart[item].qty += change;
   if(cart[item].qty < 0) cart[item].qty = 0;
@@ -33,7 +33,7 @@ function changeQty(item, change){
   updateTotal();
 }
 
-// 💰 Update Total + Order List
+// 💰 Total
 function updateTotal(){
   let total = 0;
   let html = "";
@@ -52,11 +52,10 @@ function updateTotal(){
   }
 
   document.getElementById("total").innerText = total;
-  document.getElementById("orderList").innerHTML =
-    html || "No items selected";
+  document.getElementById("orderList").innerHTML = html || "No items selected";
 }
 
-// 📦 Place Order (SAVE + WhatsApp)
+// 📦 Order
 function sendWhatsApp(){
   let table = document.getElementById("table").value;
 
@@ -82,35 +81,32 @@ function sendWhatsApp(){
     return;
   }
 
-  // 🔥 Generate Order ID
   let orderId = "ORD" + Math.floor(Math.random()*10000);
 
-  // 🔥 SAVE TO FIREBASE
+  // 🔥 SAVE TO FIREBASE (NOW WILL WORK)
   db.ref("orders").push({
-    orderId: orderId,
-    table: table,
-    items: items,
-    total: total,
+    orderId,
+    table,
+    items,
+    total,
     status: "pending",
     time: new Date().toLocaleString(),
     date: new Date().toLocaleDateString()
   });
 
-  // 🎉 Confirmation
   alert("✅ Order Placed!\nOrder ID: " + orderId);
 
-  // 📱 WhatsApp
   let finalText = "Order ID: "+orderId+"%0A"
                 + "Table: "+table+"%0A"
                 + text
                 + "Total: ₹"+total;
 
-  window.open("https://wa.me/+917330100133?text="+finalText);
+  window.open("https://wa.me/917330100133?text="+finalText);
 
   clearCart();
 }
 
-// 💳 UPI Payment
+// 💳 UPI FIXED
 function payUPI(){
   let total = 0;
 
@@ -124,10 +120,10 @@ function payUPI(){
   }
 
   window.location.href =
-    "vickysiris2@ybl"+total+"&cu=INR";
+    "upi://pay?pa=vickysiris2@ybl&pn=Dhawath&am="+total+"&cu=INR";
 }
 
-// 🧹 Clear Cart
+// 🧹 Clear
 function clearCart(){
   for(let key in cart){
     cart[key].qty = 0;
@@ -137,6 +133,8 @@ function clearCart(){
   updateTotal();
   document.getElementById("orderList").innerHTML = "No items selected";
 }
+
+// 📊 Dashboard
 function openDashboard(){
   window.open("admin.html", "_blank");
 }
