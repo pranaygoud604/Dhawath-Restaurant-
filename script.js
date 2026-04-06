@@ -62,7 +62,7 @@ function sendWhatsApp(){
                 + text
                 + "Total: ₹"+total;
 
-  window.open("https://wa.me/91XXXXXXXXXX?text="+finalText);
+  window.open("https://wa.me/+917330100133?text="+finalText);
 
   clearCart();
 }
@@ -78,7 +78,7 @@ function payUPI(){
     return;
   }
 
-  window.location.href="upi://pay?pa=yourupi@upi&pn=Dhawath&am="+total+"&cu=INR";
+  window.location.href=""+total+"&cu=INR";
 }
 
 function clearCart(){
