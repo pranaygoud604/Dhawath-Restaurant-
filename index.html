@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dhawath Restaurant</title>
+
 <style>
 body {
   margin: 0;
@@ -17,17 +18,6 @@ body {
   background: rgba(0,0,0,0.85);
   min-height: 100vh;
   padding: 20px;
-}
-
-h1 {
-  font-size: 28px;
-  margin-bottom: 5px;
-}
-
-.subtitle {
-  color: #f4b400;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
 }
 
 input {
@@ -48,20 +38,6 @@ input {
   background: rgba(255,255,255,0.05);
   padding: 15px;
   border-radius: 12px;
-  backdrop-filter: blur(5px);
-}
-
-.item h3 {
-  margin: 5px 0;
-}
-
-.price {
-  color: #f4b400;
-  font-weight: bold;
-}
-
-.qty-box {
-  margin-top: 10px;
 }
 
 .qty-box button {
@@ -72,11 +48,6 @@ input {
   border-radius: 5px;
 }
 
-.total {
-  margin-top: 20px;
-  font-size: 18px;
-}
-
 .actions button {
   background: #f4b400;
   border: none;
@@ -84,28 +55,24 @@ input {
   margin: 5px;
   border-radius: 8px;
 }
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 </style>
 </head>
 
 <body>
+
 <div class="overlay">
 
 <h1>Dhawath Restaurant</h1>
-<div class="subtitle">SCAN • ORDER • PAY</div>
+<p>SCAN • ORDER • PAY</p>
 
 <input type="number" id="table" placeholder="Enter Table Number">
 
 <div class="grid">
 
+<!-- ITEMS -->
 <div class="item">
-<h3>🍜 Noodles</h3>
-<div class="price">₹120</div>
+<h3>Noodles</h3>
+<p>₹120</p>
 <div class="qty-box">
 <button onclick="changeQty('noodles',-1)">-</button>
 <span id="qty-noodles">0</span>
@@ -114,8 +81,8 @@ input {
 </div>
 
 <div class="item">
-<h3>🍔 Burger</h3>
-<div class="price">₹100</div>
+<h3>Burger</h3>
+<p>₹100</p>
 <div class="qty-box">
 <button onclick="changeQty('burger',-1)">-</button>
 <span id="qty-burger">0</span>
@@ -124,8 +91,8 @@ input {
 </div>
 
 <div class="item">
-<h3>🥙 Shawarma</h3>
-<div class="price">₹130</div>
+<h3>Shawarma</h3>
+<p>₹130</p>
 <div class="qty-box">
 <button onclick="changeQty('shawarma',-1)">-</button>
 <span id="qty-shawarma">0</span>
@@ -134,8 +101,8 @@ input {
 </div>
 
 <div class="item">
-<h3>🍗 Tandoori Chicken</h3>
-<div class="price">₹220</div>
+<h3>Tandoori</h3>
+<p>₹220</p>
 <div class="qty-box">
 <button onclick="changeQty('tandoori',-1)">-</button>
 <span id="qty-tandoori">0</span>
@@ -144,8 +111,8 @@ input {
 </div>
 
 <div class="item">
-<h3>🧀 Paneer Tikka</h3>
-<div class="price">₹160</div>
+<h3>Paneer</h3>
+<p>₹160</p>
 <div class="qty-box">
 <button onclick="changeQty('paneer',-1)">-</button>
 <span id="qty-paneer">0</span>
@@ -154,8 +121,8 @@ input {
 </div>
 
 <div class="item">
-<h3>🥤 Cool Drinks</h3>
-<div class="price">₹40</div>
+<h3>Drinks</h3>
+<p>₹40</p>
 <div class="qty-box">
 <button onclick="changeQty('drinks',-1)">-</button>
 <span id="qty-drinks">0</span>
@@ -163,22 +130,27 @@ input {
 </div>
 </div>
 
-<div>
+</div> <!-- ✅ GRID CLOSED -->
+
 <h3>Your Order</h3>
-<div id="orderList"></div>
-<div class="total">
-Total: ₹<span id="total">0</span>
-</div>
-</div>
-</div>
+<div id="orderList">No items selected</div>
+
+<h2>Total: ₹<span id="total">0</span></h2>
+
 <div class="actions">
 <button onclick="payUPI()">💳 Pay</button>
 <button onclick="sendWhatsApp()">📱 Order</button>
 <button onclick="clearCart()">🧹 Clear</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+</div>
+
+<!-- ✅ VERY IMPORTANT: USE FIREBASE v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<!-- Your JS -->
 <script src="script.js"></script>
+
 </body>
 </html>
