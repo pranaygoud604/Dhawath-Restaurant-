@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#121212;
+  color:white;
+}
+
+.header{
+  padding:15px;
+  text-align:center;
+  background:#1c1c1c;
+}
+
+.section{
+  padding:10px;
+  color:#fc8019;
+}
+
+.container{
+  padding:10px;
+}
+
+.card{
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">📊 Reports</div>
+
+<div class="section">Today</div>
+<div class="container" id="todayReport"></div>
+
+<div class="section">Previous Days</div>
+<div class="container" id="history"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+db.ref("dailyReports").on("value", snapshot => {
+
+  let data = snapshot.val();
+
+  if(!data){
+    document.getElementById("todayReport").innerHTML = "No data";
+    return;
+  }
+
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  let todayHTML = "";
+  let historyHTML = "";
+
+  Object.entries(data).reverse().forEach(([date, report]) => {
+
+    let card = `
+      <div class="card">
+        <b>${date}</b><br>
+        Orders: ${report.totalOrders}<br>
+        Revenue: ₹${report.revenue}<br>
+        Pending: ₹${report.pending}
+      </div>
+    `;
+
+    if(date === todayKey){
+      todayHTML = card;
+    } else {
+      historyHTML += card;
+    }
+
+  });
+
+  document.getElementById("todayReport").innerHTML = todayHTML;
+  document.getElementById("history").innerHTML = historyHTML;
+
+});
+</script>
+
+</body>
+</html>
