@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kitchen Dashboard</title>
 
-<h3>💳 Pending Payments</h3>
-<div id="payments"></div>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -25,6 +23,13 @@ body{
   background:#1c1c1c;
   font-size:20px;
   font-weight:600;
+}
+
+/* SECTION TITLE */
+.section{
+  padding:10px 15px;
+  font-size:14px;
+  color:#fc8019;
 }
 
 /* CONTAINER */
@@ -79,23 +84,32 @@ body{
 .pending{background:#ff9800;}
 .cooking{background:#2196f3;}
 .done{background:#4caf50;}
+.paid{background:#4caf50;}
+.unpaid{background:#ff9800;}
 
 /* BUTTONS */
 .buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
   margin-top:10px;
 }
 
 button{
+  flex:1;
   border:none;
-  padding:8px 10px;
+  padding:8px;
   border-radius:8px;
-  margin:5px 5px 0 0;
   font-size:12px;
+  font-weight:600;
+  color:white;
 }
 
-.cookBtn{background:#2196f3;color:white;}
-.doneBtn{background:#4caf50;color:white;}
-.deleteBtn{background:#f44336;color:white;}
+.cookBtn{background:#2196f3;}
+.doneBtn{background:#4caf50;}
+.payBtn{background:#ff9800;}
+.deleteBtn{background:#f44336;}
+.paidBtn{background:#555;}
 </style>
 </head>
 
@@ -103,6 +117,10 @@ button{
 
 <div class="header">🍽️ Kitchen Dashboard</div>
 
+<div class="section">💰 Pending Payments</div>
+<div class="container" id="payments"></div>
+
+<div class="section">🔥 Live Orders</div>
 <div class="container" id="orders"></div>
 
 <!-- 🔔 SOUND -->
@@ -127,101 +145,101 @@ let previousCount = 0;
 db.ref("orders").on("value", snapshot => {
 
   let data = snapshot.val();
-  let html = "";
 
   if(!data){
     document.getElementById("orders").innerHTML = "No orders";
+    document.getElementById("payments").innerHTML = "";
     return;
   }
 
   let orders = Object.entries(data).reverse();
 
-  // 🔔 Play sound only for new order
+  // 🔔 SOUND FOR NEW ORDER
   if(orders.length > previousCount){
     document.getElementById("sound").play();
   }
   previousCount = orders.length;
 
+  let orderHTML = "";
+  let paymentHTML = "";
+
   orders.forEach(([id, order]) => {
 
-    let statusClass = order.status || "pending";
+    if(!order) return;
+
+    let status = order.status || "pending";
+    let payment = order.payment || "unpaid";
 
     // ITEMS
     let itemsHTML = "";
     if(order.items){
       for(let key in order.items){
         let item = order.items[key];
-        if(item.qty > 0){
+        if(item && item.qty > 0){
           itemsHTML += `<div class="item">${item.name} x ${item.qty}</div>`;
         }
       }
     }
 
-    html += `
-    <div class="card">
-      <div class="table">Table ${order.table}</div>
-      <div class="time">${order.time || ""}</div>
+    // 🔥 LIVE ORDERS (NOT DONE)
+    if(status !== "done"){
+      orderHTML += `
+      <div class="card">
+        <div class="table">Table ${order.table}</div>
+        <div class="time">${order.time || ""}</div>
 
-      ${itemsHTML}
+        ${itemsHTML}
 
-      <div class="total">₹${order.total}</div>
+        <div class="total">₹${order.total}</div>
 
-      <div class="status ${statusClass}">
-        ${order.status}
-      </div>
+        <div class="status ${status}">${status}</div>
 
-      <div class="buttons" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+        <div class="buttons">
+          <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
+          <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
+          <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
+        </div>
+      </div>`;
+    }
 
-  <button class="cookBtn"
-    style="flex:1;background:#2196f3;color:white;font-weight:600;border-radius:8px;"
-    onclick="updateStatus('${id}','cooking')">
-    🍳 Cooking
-  </button>
+    // 💰 PENDING PAYMENTS (DONE BUT NOT PAID)
+    if(status === "done" && payment !== "paid"){
+      paymentHTML += `
+      <div class="card">
+        <div class="table">Table ${order.table}</div>
 
-  <button class="doneBtn"
-    style="flex:1;background:#4caf50;color:white;font-weight:600;border-radius:8px;"
-    onclick="updateStatus('${id}','done')">
-    ✅ Done
-  </button>
+        ${itemsHTML}
 
-  ${
-    order.payment !== "paid"
-    ? `<button 
-        style="flex:1;background:#ff9800;color:white;font-weight:600;border-radius:8px;"
-        onclick="markPaid('${id}')">
-        💳 Mark Paid
-      </button>`
-    : `<button 
-        style="flex:1;background:#555;color:white;font-weight:600;border-radius:8px;">
-        ✔ Paid
-      </button>`
-  }
+        <div class="total">₹${order.total}</div>
 
-  <button class="deleteBtn"
-    style="flex:1;background:#f44336;color:white;font-weight:600;border-radius:8px;"
-    onclick="deleteOrder('${id}')">
-    🗑 Delete
-  </button>
+        <div class="status unpaid">Unpaid</div>
 
-</div>
+        <div class="buttons">
+          <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
+        </div>
+      </div>`;
+    }
 
-  document.getElementById("orders").innerHTML = html;
+  });
+
+  document.getElementById("orders").innerHTML = orderHTML || "No active orders";
+  document.getElementById("payments").innerHTML = paymentHTML || "No pending payments";
+
 });
 
-// UPDATE STATUS
+// ✅ UPDATE STATUS
 function updateStatus(id, status){
   db.ref("orders/"+id).update({ status });
 }
 
-// DELETE ORDER
+// 💳 MARK PAID
+function markPaid(id){
+  db.ref("orders/"+id).update({ payment:"paid" });
+}
+
+// ❌ DELETE
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
-}
-  // paid orders
-function markPaid(id){
-  db.ref("orders/"+id).update({
-    payment: "paid"
-  });
 }
 </script>
 
