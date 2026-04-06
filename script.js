@@ -1,12 +1,3 @@
-// Firebase
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  databaseURL: "YOUR_DB_URL"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
 
 // CART
 let cart = {
