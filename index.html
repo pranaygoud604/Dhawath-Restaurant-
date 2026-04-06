@@ -8,204 +8,237 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial;
-  background: #000;
-  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
   text-align: center;
+  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center/cover;
+}
+
+.overlay {
+  background: rgba(0,0,0,0.85);
+  min-height: 100vh;
+  padding: 20px;
 }
 
 h1 {
-  margin: 10px 0;
+  font-size: 28px;
+  margin-bottom: 5px;
 }
 
-.container {
-  padding: 10px;
+.subtitle {
+  color: #f4b400;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
 }
 
 input {
-  width: 90%;
+  width: 80%;
   padding: 12px;
-  font-size: 16px;
-  margin: 10px 0;
   border-radius: 8px;
   border: none;
+  margin-bottom: 20px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 }
 
 .item {
-  background: #1c1c1c;
+  background: rgba(255,255,255,0.05);
   padding: 15px;
   border-radius: 12px;
+  backdrop-filter: blur(5px);
+}
+
+.item h3 {
+  margin: 5px 0;
+}
+
+.price {
+  color: #f4b400;
+  font-weight: bold;
 }
 
 .qty-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
   margin-top: 10px;
 }
 
 .qty-box button {
   background: #f4b400;
   border: none;
-  padding: 8px 12px;
-  font-size: 18px;
-  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 5px;
+  border-radius: 5px;
 }
 
-button.main {
+.total {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.actions button {
   background: #f4b400;
   border: none;
-  padding: 12px;
+  padding: 10px;
   margin: 5px;
   border-radius: 8px;
-  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
 </head>
 
 <body>
+<div class="overlay">
 
-<h1>Dhawath Restaurant 🍽️</h1>
-<p>Scan • Order • Pay</p>
+<h1>Dhawath Restaurant</h1>
+<div class="subtitle">SCAN • ORDER • PAY</div>
 
 <input type="number" id="table" placeholder="Enter Table Number">
 
-<div class="container">
-  <div class="grid">
+<div class="grid">
 
-    <div class="item">
-      <h2>Chicken Biryani</h2>
-      <p>₹180</p>
-      <div class="qty-box">
-        <button onclick="changeQty('chicken', -1)">➖</button>
-        <span id="qty-chicken">0</span>
-        <button onclick="changeQty('chicken', 1)">➕</button>
-      </div>
-    </div>
-
-    <div class="item">
-      <h2>Mutton Biryani</h2>
-      <p>₹250</p>
-      <div class="qty-box">
-        <button onclick="changeQty('mutton', -1)">➖</button>
-        <span id="qty-mutton">0</span>
-        <button onclick="changeQty('mutton', 1)">➕</button>
-      </div>
-    </div>
-
-    <div class="item">
-      <h2>Noodles</h2>
-      <p>₹120</p>
-      <div class="qty-box">
-        <button onclick="changeQty('noodles', -1)">➖</button>
-        <span id="qty-noodles">0</span>
-        <button onclick="changeQty('noodles', 1)">➕</button>
-      </div>
-    </div>
-
-    <div class="item">
-      <h2>Burger</h2>
-      <p>₹100</p>
-      <div class="qty-box">
-        <button onclick="changeQty('burger', -1)">➖</button>
-        <span id="qty-burger">0</span>
-        <button onclick="changeQty('burger', 1)">➕</button>
-      </div>
-    </div>
-
-    <div class="item">
-      <h2>Cool Drinks</h2>
-      <p>₹40</p>
-      <div class="qty-box">
-        <button onclick="changeQty('drinks', -1)">➖</button>
-        <span id="qty-drinks">0</span>
-        <button onclick="changeQty('drinks', 1)">➕</button>
-      </div>
-    </div>
-
-  </div>
+<div class="item">
+<h3>🍜 Noodles</h3>
+<div class="price">₹120</div>
+<div class="qty-box">
+<button onclick="changeQty('noodles',-1)">-</button>
+<span id="qty-noodles">0</span>
+<button onclick="changeQty('noodles',1)">+</button>
+</div>
 </div>
 
-<h2>Total: <span id="total">₹0</span></h2>
+<div class="item">
+<h3>🍔 Burger</h3>
+<div class="price">₹100</div>
+<div class="qty-box">
+<button onclick="changeQty('burger',-1)">-</button>
+<span id="qty-burger">0</span>
+<button onclick="changeQty('burger',1)">+</button>
+</div>
+</div>
 
-<button class="main" onclick="payUPI()">💳 Pay via UPI</button>
-<button class="main" onclick="sendWhatsApp()">📱 Send Order</button>
-<button class="main" onclick="clearCart()">🧹 Clear</button>
+<div class="item">
+<h3>🥙 Shawarma</h3>
+<div class="price">₹130</div>
+<div class="qty-box">
+<button onclick="changeQty('shawarma',-1)">-</button>
+<span id="qty-shawarma">0</span>
+<button onclick="changeQty('shawarma',1)">+</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🍗 Tandoori Chicken</h3>
+<div class="price">₹220</div>
+<div class="qty-box">
+<button onclick="changeQty('tandoori',-1)">-</button>
+<span id="qty-tandoori">0</span>
+<button onclick="changeQty('tandoori',1)">+</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🧀 Paneer Tikka</h3>
+<div class="price">₹160</div>
+<div class="qty-box">
+<button onclick="changeQty('paneer',-1)">-</button>
+<span id="qty-paneer">0</span>
+<button onclick="changeQty('paneer',1)">+</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🥤 Cool Drinks</h3>
+<div class="price">₹40</div>
+<div class="qty-box">
+<button onclick="changeQty('drinks',-1)">-</button>
+<span id="qty-drinks">0</span>
+<button onclick="changeQty('drinks',1)">+</button>
+</div>
+</div>
+
+</div>
+
+<div class="total">
+Total: ₹<span id="total">0</span>
+</div>
+
+<div class="actions">
+<button onclick="payUPI()">💳 Pay</button>
+<button onclick="sendWhatsApp()">📱 Order</button>
+<button onclick="clearCart()">🧹 Clear</button>
+</div>
+
+</div>
 
 <script>
 let cart = {
-  chicken: { name: "Chicken Biryani", price: 180, qty: 0 },
-  mutton: { name: "Mutton Biryani", price: 250, qty: 0 },
-  noodles: { name: "Noodles", price: 120, qty: 0 },
-  burger: { name: "Burger", price: 100, qty: 0 },
-  drinks: { name: "Cool Drinks", price: 40, qty: 0 }
+  noodles:{name:"Noodles",price:120,qty:0},
+  burger:{name:"Burger",price:100,qty:0},
+  shawarma:{name:"Shawarma",price:130,qty:0},
+  tandoori:{name:"Tandoori Chicken",price:220,qty:0},
+  paneer:{name:"Paneer Tikka",price:160,qty:0},
+  drinks:{name:"Cool Drinks",price:40,qty:0}
 };
 
-function changeQty(item, change) {
+function changeQty(item, change){
   cart[item].qty += change;
-  if (cart[item].qty < 0) cart[item].qty = 0;
-
-  document.getElementById("qty-" + item).innerText = cart[item].qty;
+  if(cart[item].qty<0) cart[item].qty=0;
+  document.getElementById("qty-"+item).innerText = cart[item].qty;
   updateTotal();
 }
 
-function updateTotal() {
-  let total = 0;
-  for (let key in cart) {
+function updateTotal(){
+  let total=0;
+  for(let key in cart){
     total += cart[key].price * cart[key].qty;
   }
-  document.getElementById("total").innerText = "₹" + total;
+  document.getElementById("total").innerText = total;
 }
 
-function getOrderText() {
-  let text = "";
-  for (let key in cart) {
-    if (cart[key].qty > 0) {
-      text += cart[key].name + " x " + cart[key].qty + "%0A";
+function sendWhatsApp(){
+  let table = document.getElementById("table").value;
+  let text="";
+
+  for(let key in cart){
+    if(cart[key].qty>0){
+      text += cart[key].name+" x "+cart[key].qty+"%0A";
     }
   }
-  return text;
-}
 
-function sendWhatsApp() {
-  let table = document.getElementById("table").value;
-  let order = getOrderText();
-
-  if (!table || order === "") {
+  if(!table || text===""){
     alert("Enter table & select items");
     return;
   }
 
-  let url = "https://wa.me/91XXXXXXXXXX?text=Table " + table + "%0A" + order;
-  window.open(url, "_blank");
+  window.open("https://wa.me/91XXXXXXXXXX?text=Table "+table+"%0A"+text);
 }
 
-function payUPI() {
-  let total = 0;
-  for (let key in cart) {
+function payUPI(){
+  let total=0;
+  for(let key in cart){
     total += cart[key].price * cart[key].qty;
   }
 
-  if (total === 0) {
+  if(total===0){
     alert("Add items first");
     return;
   }
 
-  let upi = "upi://pay?pa=yourupi@upi&pn=DhawathRestaurant&am=" + total + "&cu=INR";
-  window.location.href = upi;
+  window.location.href="upi://pay?pa=yourupi@upi&pn=Dhawath&am="+total+"&cu=INR";
 }
 
-function clearCart() {
-  for (let key in cart) {
-    cart[key].qty = 0;
-    document.getElementById("qty-" + key).innerText = 0;
+function clearCart(){
+  for(let key in cart){
+    cart[key].qty=0;
+    document.getElementById("qty-"+key).innerText=0;
   }
   updateTotal();
 }
