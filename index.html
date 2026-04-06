@@ -6,54 +6,135 @@
 <title>Dhawath Restaurant</title>
 
 <style>
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Segoe UI', sans-serif;
+  background: #111;
   color: white;
-  text-align: center;
-  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center/cover;
 }
 
+/* CONTAINER */
 .overlay {
-  background: rgba(0,0,0,0.85);
-  min-height: 100vh;
-  padding: 20px;
-}
-
-input {
-  width: 80%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  margin-bottom: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-.item {
-  background: rgba(255,255,255,0.05);
+  max-width: 500px;
+  margin: auto;
   padding: 15px;
+}
+
+/* HEADER */
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin: 10px 0 20px;
+  font-size: 14px;
+}
+
+/* LIST STYLE */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ITEM CARD */
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1c1c1c;
   border-radius: 12px;
+  padding: 12px;
+}
+
+/* LEFT */
+.item-info {
+  text-align: left;
+}
+
+.item h3 {
+  font-size: 15px;
+}
+
+.price {
+  font-size: 13px;
+  color: #bbb;
+}
+
+/* RIGHT BUTTONS */
+.qty-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .qty-box button {
-  background: #f4b400;
-  border: none;
-  padding: 6px 10px;
-  margin: 5px;
-  border-radius: 5px;
+  background: white;
+  color: #28a745;
+  border: 1px solid #28a745;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.qty-box span {
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ORDER */
+#orderList {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #ccc;
+  text-align: left;
+}
+
+.total {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* ACTION BAR */
+.actions {
+  position: sticky;
+  bottom: 0;
+  background: #111;
+  padding: 10px 0;
 }
 
 .actions button {
-  background: #f4b400;
+  width: 100%;
+  background: #fc8019;
   border: none;
-  padding: 10px;
-  margin: 5px;
+  padding: 12px;
+  margin-top: 8px;
   border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+}
+
+.actions button:last-child {
+  background: #444;
 }
 </style>
 </head>
@@ -63,79 +144,98 @@ input {
 <div class="overlay">
 
 <h1>Dhawath Restaurant</h1>
-<p>SCAN • ORDER • PAY</p>
+<div class="subtitle">SCAN • ORDER • PAY</div>
 
 <input type="number" id="table" placeholder="Enter Table Number">
 
 <div class="grid">
 
-<!-- ITEMS -->
+<!-- ITEM 1 -->
 <div class="item">
-<h3>Noodles</h3>
-<p>₹120</p>
-<div class="qty-box">
-<button onclick="changeQty('noodles',-1)">-</button>
-<span id="qty-noodles">0</span>
-<button onclick="changeQty('noodles',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🍜 Noodles</h3>
+    <div class="price">₹120</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('noodles',-1)">-</button>
+    <span id="qty-noodles">0</span>
+    <button onclick="changeQty('noodles',1)">+</button>
+  </div>
 </div>
 
+<!-- ITEM 2 -->
 <div class="item">
-<h3>Burger</h3>
-<p>₹100</p>
-<div class="qty-box">
-<button onclick="changeQty('burger',-1)">-</button>
-<span id="qty-burger">0</span>
-<button onclick="changeQty('burger',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🍔 Burger</h3>
+    <div class="price">₹100</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('burger',-1)">-</button>
+    <span id="qty-burger">0</span>
+    <button onclick="changeQty('burger',1)">+</button>
+  </div>
 </div>
 
+<!-- ITEM 3 -->
 <div class="item">
-<h3>Shawarma</h3>
-<p>₹130</p>
-<div class="qty-box">
-<button onclick="changeQty('shawarma',-1)">-</button>
-<span id="qty-shawarma">0</span>
-<button onclick="changeQty('shawarma',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🥙 Shawarma</h3>
+    <div class="price">₹130</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('shawarma',-1)">-</button>
+    <span id="qty-shawarma">0</span>
+    <button onclick="changeQty('shawarma',1)">+</button>
+  </div>
 </div>
 
+<!-- ITEM 4 -->
 <div class="item">
-<h3>Tandoori</h3>
-<p>₹220</p>
-<div class="qty-box">
-<button onclick="changeQty('tandoori',-1)">-</button>
-<span id="qty-tandoori">0</span>
-<button onclick="changeQty('tandoori',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🍗 Tandoori Chicken</h3>
+    <div class="price">₹220</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('tandoori',-1)">-</button>
+    <span id="qty-tandoori">0</span>
+    <button onclick="changeQty('tandoori',1)">+</button>
+  </div>
 </div>
 
+<!-- ITEM 5 -->
 <div class="item">
-<h3>Paneer</h3>
-<p>₹160</p>
-<div class="qty-box">
-<button onclick="changeQty('paneer',-1)">-</button>
-<span id="qty-paneer">0</span>
-<button onclick="changeQty('paneer',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🧀 Paneer Tikka</h3>
+    <div class="price">₹160</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('paneer',-1)">-</button>
+    <span id="qty-paneer">0</span>
+    <button onclick="changeQty('paneer',1)">+</button>
+  </div>
 </div>
 
+<!-- ITEM 6 -->
 <div class="item">
-<h3>Drinks</h3>
-<p>₹40</p>
-<div class="qty-box">
-<button onclick="changeQty('drinks',-1)">-</button>
-<span id="qty-drinks">0</span>
-<button onclick="changeQty('drinks',1)">+</button>
-</div>
+  <div class="item-info">
+    <h3>🥤 Cool Drinks</h3>
+    <div class="price">₹40</div>
+  </div>
+  <div class="qty-box">
+    <button onclick="changeQty('drinks',-1)">-</button>
+    <span id="qty-drinks">0</span>
+    <button onclick="changeQty('drinks',1)">+</button>
+  </div>
 </div>
 
-</div> <!-- ✅ GRID CLOSED -->
+</div>
 
 <h3>Your Order</h3>
 <div id="orderList">No items selected</div>
 
-<h2>Total: ₹<span id="total">0</span></h2>
+<div class="total">
+Total: ₹<span id="total">0</span>
+</div>
 
 <div class="actions">
 <button onclick="payUPI()">💳 Pay</button>
@@ -145,7 +245,7 @@ input {
 
 </div>
 
-<!-- ✅ VERY IMPORTANT: USE FIREBASE v8 -->
+<!-- ✅ Firebase v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
