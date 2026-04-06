@@ -3,11 +3,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
   authDomain: "dhawath-restaurant.firebaseapp.com",
   databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com",
-  projectId: "dhawath-restaurant",
-  storageBucket: "dhawath-restaurant.firebasestorage.app",
-  messagingSenderId: "896647998152",
-  appId: "1:896647998152:web:472c242233b07eea53d3fd",
-  measurementId: "G-GH9496VVXZ"
 };
 
 // Initialize Firebase
