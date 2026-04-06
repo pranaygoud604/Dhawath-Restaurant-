@@ -1,5 +1,14 @@
 console.log("JS Loaded ✅");
 
+let cart = {
+  biryani:{name:"Chicken Biryani",price:180,qty:0},
+  mutton:{name:"Mutton Biryani",price:250,qty:0},
+  noodles:{name:"Noodles",price:120,qty:0},
+  burger:{name:"Burger",price:100,qty:0},
+  rice:{name:"Fried Rice",price:140,qty:0},
+  shawarma:{name:"Shawarma",price:130,qty:0}
+};
+
 // 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
