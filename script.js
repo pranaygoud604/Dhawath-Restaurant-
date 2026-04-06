@@ -136,3 +136,6 @@ function clearCart(){
   updateTotal();
   document.getElementById("orderList").innerHTML = "No items selected";
 }
+function openDashboard(){
+  window.open("admin.html", "_blank");
+}
