@@ -63,45 +63,39 @@ function sendWhatsApp(){
   let table = document.getElementById("table").value;
 
   let total = 0;
-  let items = [];
   let text = "";
 
   for(let key in cart){
     if(cart[key].qty > 0){
-      total += cart[key].price * cart[key].qty;
+      let itemTotal = cart[key].price * cart[key].qty;
+      total += itemTotal;
 
-      items.push({
-        name: cart[key].name,
-        qty: cart[key].qty
-      });
-
-      text += cart[key].name + " x " + cart[key].qty + "%0A";
+      text += cart[key].name + " - ₹" + itemTotal + "%0A";
     }
   }
 
-  if(!table || items.length === 0){
+  if(!table || total === 0){
     alert("Enter table & select items");
     return;
   }
 
-  // 🔥 SAVE TO FIREBASE (using table number)
+  // 🔥 Save to Firebase
   db.ref("orders").push({
     table: table,
-    items: items,
     total: total,
     status: "pending",
-    time: new Date().toLocaleString(),
-    date: new Date().toLocaleDateString()
+    time: new Date().toLocaleString()
   });
 
-  alert("✅ Order Placed for Table: " + table);
+  // 📱 WhatsApp Message (Styled)
+  let finalText =
+    "🍽️ Table " + table + " Order%0A%0A" +
+    text + "%0A" +
+    "Total: ₹" + total;
 
-  // 📱 WhatsApp message
-  let finalText = "Table: "+table+"%0A"
-                + text
-                + "Total: ₹"+total;
+  window.open("https://wa.me/917330100133?text=" + finalText);
 
-  window.open("https://wa.me/917330100133?text="+finalText);
+  alert("✅ Order Sent for Table " + table);
 
   clearCart();
 
