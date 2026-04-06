@@ -1,96 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Kitchen Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body {
-  margin:0;
-  font-family: 'Segoe UI';
-  background:#0f0f0f;
-  color:white;
-}
-
-h2 {
-  text-align:center;
-  padding:15px;
-  background:#1c1c1c;
-  margin:0;
-}
-
-.container {
-  padding:15px;
-}
-
-.card {
-  background:#1c1c1c;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.5);
-}
-
-.table {
-  font-size:18px;
-  font-weight:bold;
-  color:#fc8019;
-}
-
-.item {
-  font-size:14px;
-  margin:5px 0;
-}
-
-.total {
-  margin-top:10px;
-  font-weight:bold;
-}
-
-.status {
-  margin-top:10px;
-  padding:5px 10px;
-  border-radius:8px;
-  display:inline-block;
-}
-
-.pending { background:orange; }
-.cooking { background:blue; }
-.done { background:green; }
-
-.buttons {
-  margin-top:10px;
-}
-
-button {
-  margin:5px;
-  padding:8px 10px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.accept { background:blue; color:white; }
-.doneBtn { background:green; color:white; }
-.delete { background:red; color:white; }
-</style>
-</head>
-
-<body>
-
-<h2>🍽️ Kitchen Dashboard</h2>
-
-<div class="container" id="orders"></div>
-
-<!-- 🔔 SOUND -->
-<audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 <script>
-// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
   authDomain: "dhawath-restaurant.firebaseapp.com",
@@ -100,25 +8,45 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 🔄 LOAD ORDERS LIVE
 db.ref("orders").on("value", snapshot => {
 
   let data = snapshot.val();
   let html = "";
 
-  document.getElementById("sound").play(); // 🔔 new order sound
+  if(!data){
+    document.getElementById("orders").innerHTML = "No orders";
+    return;
+  }
 
-  for(let id in data){
+  // 🔥 Convert to array + sort latest first
+  let orders = Object.entries(data).sort((a,b)=>{
+    return (b[1].timestamp || 0) - (a[1].timestamp || 0);
+  });
 
-    let order = data[id];
+  orders.forEach(([id, order]) => {
 
     let statusClass = "pending";
     if(order.status==="cooking") statusClass="cooking";
     if(order.status==="done") statusClass="done";
 
+    // 🔥 ITEMS DISPLAY
+    let itemsHTML = "";
+    if(order.items){
+      for(let key in order.items){
+        let item = order.items[key];
+        if(item.qty > 0){
+          itemsHTML += `<div class="item">${item.name} x ${item.qty}</div>`;
+        }
+      }
+    }
+
     html += `
     <div class="card">
       <div class="table">Table ${order.table}</div>
+
+      <div>${order.time || ""}</div>
+
+      ${itemsHTML}
 
       <div class="total">₹${order.total}</div>
 
@@ -132,21 +60,18 @@ db.ref("orders").on("value", snapshot => {
         <button class="delete" onclick="deleteOrder('${id}')">Delete</button>
       </div>
     </div>`;
-  }
+  });
 
-  document.getElementById("orders").innerHTML = html || "No orders";
+  document.getElementById("orders").innerHTML = html;
 });
 
-// 🔄 UPDATE STATUS
+// UPDATE STATUS
 function updateStatus(id, status){
   db.ref("orders/"+id).update({ status });
 }
 
-// ❌ DELETE
+// DELETE
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
 }
 </script>
-
-</body>
-</html>
