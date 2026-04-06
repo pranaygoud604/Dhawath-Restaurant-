@@ -1,59 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Dashboard</title>
+<title>Kitchen Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body { background:#111; color:white; font-family:Arial; }
-.card {
-  background:#222;
-  margin:10px;
-  padding:10px;
-  border-radius:10px;
+body {
+  margin:0;
+  font-family: 'Segoe UI';
+  background:#0f0f0f;
+  color:white;
 }
+
+h2 {
+  text-align:center;
+  padding:15px;
+  background:#1c1c1c;
+  margin:0;
+}
+
+.container {
+  padding:15px;
+}
+
+.card {
+  background:#1c1c1c;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.table {
+  font-size:18px;
+  font-weight:bold;
+  color:#fc8019;
+}
+
+.item {
+  font-size:14px;
+  margin:5px 0;
+}
+
+.total {
+  margin-top:10px;
+  font-weight:bold;
+}
+
+.status {
+  margin-top:10px;
+  padding:5px 10px;
+  border-radius:8px;
+  display:inline-block;
+}
+
+.pending { background:orange; }
+.cooking { background:blue; }
+.done { background:green; }
+
+.buttons {
+  margin-top:10px;
+}
+
+button {
+  margin:5px;
+  padding:8px 10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.accept { background:blue; color:white; }
+.doneBtn { background:green; color:white; }
+.delete { background:red; color:white; }
 </style>
 </head>
 
 <body>
 
-<h2>📊 Live Orders</h2>
-<div id="orders"></div>
+<h2>🍽️ Kitchen Dashboard</h2>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+<div class="container" id="orders"></div>
+
+<!-- 🔔 SOUND -->
+<audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+// 🔥 Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  databaseURL: "YOUR_DB_URL",
-  projectId: "YOUR_ID",
+  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-db.ref("orders").on("value", (snap)=>{
-  let data = snap.val();
-  let html="";
+// 🔄 LOAD ORDERS LIVE
+db.ref("orders").on("value", snapshot => {
+
+  let data = snapshot.val();
+  let html = "";
+
+  document.getElementById("sound").play(); // 🔔 new order sound
 
   for(let id in data){
-    let o = data[id];
 
-    html += `<div class="card">
-      <h3>Table ${o.table}</h3>
-      <p>Total: ₹${o.total}</p>
-      <p>${o.time}</p>
-      <ul>`;
+    let order = data[id];
 
-    o.items.forEach(i=>{
-      html += `<li>${i}</li>`;
-    });
+    let statusClass = "pending";
+    if(order.status==="cooking") statusClass="cooking";
+    if(order.status==="done") statusClass="done";
 
-    html += `</ul></div>`;
+    html += `
+    <div class="card">
+      <div class="table">Table ${order.table}</div>
+
+      <div class="total">₹${order.total}</div>
+
+      <div class="status ${statusClass}">
+        ${order.status}
+      </div>
+
+      <div class="buttons">
+        <button class="accept" onclick="updateStatus('${id}','cooking')">Cooking</button>
+        <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
+        <button class="delete" onclick="deleteOrder('${id}')">Delete</button>
+      </div>
+    </div>`;
   }
 
-  document.getElementById("orders").innerHTML = html;
+  document.getElementById("orders").innerHTML = html || "No orders";
 });
+
+// 🔄 UPDATE STATUS
+function updateStatus(id, status){
+  db.ref("orders/"+id).update({ status });
+}
+
+// ❌ DELETE
+function deleteOrder(id){
+  db.ref("orders/"+id).remove();
+}
 </script>
 
 </body>
