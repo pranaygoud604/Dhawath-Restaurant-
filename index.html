@@ -6,186 +6,188 @@
 <title>Dhawath Restaurant</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* BACKGROUND */
 body {
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center/cover;
+  background: #0f0f0f;
   color: white;
-}
-
-/* OVERLAY */
-.overlay {
-  background: rgba(0,0,0,0.75);
-  min-height: 100vh;
-  padding: 20px;
 }
 
 /* HEADER */
 .header {
+  padding: 20px;
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.header h1 {
-  font-size: 32px;
 }
 
 .subtitle {
-  color: #f4b400;
-  letter-spacing: 3px;
+  color: orange;
+  font-size: 12px;
 }
 
-/* TABLE INPUT */
+/* INPUT */
 input {
-  width: 300px;
+  width: 90%;
   padding: 12px;
   border-radius: 10px;
   border: none;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 30px;
+/* LIST STYLE */
+.menu {
+  padding: 15px;
 }
 
-/* CARD */
 .item {
-  background: rgba(255,255,255,0.08);
-  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 15px;
   border-radius: 15px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 25px rgba(0,0,0,0.5);
-  transition: 0.3s;
+  margin-bottom: 12px;
 }
 
-.item:hover {
-  transform: scale(1.05);
-}
-
-/* ICON */
-.item img {
-  width: 40px;
-  margin-bottom: 10px;
-}
-
-/* TITLE */
 .item h3 {
-  margin-bottom: 5px;
+  margin: 0;
 }
 
-/* PRICE */
 .price {
-  color: #f4b400;
+  color: orange;
+  font-size: 14px;
+}
+
+/* BUTTONS */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.controls button {
+  background: orange;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
   font-weight: bold;
 }
 
-/* BUTTON */
-.item button {
-  margin-top: 10px;
-  background: linear-gradient(90deg, #f4b400, #ffcc33);
+/* FLOATING CART */
+.cart-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #1a1a1a;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+}
+
+.cart-bar button {
+  background: orange;
   border: none;
   padding: 10px 15px;
   border-radius: 10px;
   font-weight: bold;
-  cursor: pointer;
-}
-
-/* ORDER SECTION */
-.order-box {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.total {
-  margin-top: 10px;
-  font-size: 20px;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-
 <div class="header">
-<h1>Dhawath Restaurant</h1>
+<h2>Dhawath Restaurant</h2>
 <div class="subtitle">SCAN • ORDER • PAY</div>
-
 <input type="number" id="table" placeholder="Enter Table Number">
 </div>
 
-<div class="grid">
+<div class="menu">
 
 <div class="item">
-<h3>Chicken Biryani</h3>
+<div>
+<h3>🍗 Chicken Biryani</h3>
 <div class="price">₹180</div>
-<button onclick="changeQty('biryani',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('biryani',-1)">-</button>
+<span id="qty-biryani">0</span>
+<button onclick="changeQty('biryani',1)">+</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Mutton Biryani</h3>
+<div>
+<h3>🍖 Mutton Biryani</h3>
 <div class="price">₹250</div>
-<button onclick="changeQty('mutton',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('mutton',-1)">-</button>
+<span id="qty-mutton">0</span>
+<button onclick="changeQty('mutton',1)">+</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Noodles</h3>
+<div>
+<h3>🍜 Noodles</h3>
 <div class="price">₹120</div>
-<button onclick="changeQty('noodles',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('noodles',-1)">-</button>
+<span id="qty-noodles">0</span>
+<button onclick="changeQty('noodles',1)">+</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Burger</h3>
+<div>
+<h3>🍔 Burger</h3>
 <div class="price">₹100</div>
-<button onclick="changeQty('burger',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('burger',-1)">-</button>
+<span id="qty-burger">0</span>
+<button onclick="changeQty('burger',1)">+</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Fried Rice</h3>
+<div>
+<h3>🍚 Fried Rice</h3>
 <div class="price">₹140</div>
-<button onclick="changeQty('rice',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('rice',-1)">-</button>
+<span id="qty-rice">0</span>
+<button onclick="changeQty('rice',1)">+</button>
+</div>
 </div>
 
 <div class="item">
-<h3>Shawarma</h3>
+<div>
+<h3>🥙 Shawarma</h3>
 <div class="price">₹130</div>
-<button onclick="changeQty('shawarma',1)">Add to Order</button>
+</div>
+<div class="controls">
+<button onclick="changeQty('shawarma',-1)">-</button>
+<span id="qty-shawarma">0</span>
+<button onclick="changeQty('shawarma',1)">+</button>
+</div>
 </div>
 
 </div>
 
-<div class="order-box">
-<h3>Your Order</h3>
-<div id="orderList">Your cart is empty</div>
-
-<div class="total">
+<!-- FLOATING CART -->
+<div class="cart-bar">
+<div>
 Total: ₹<span id="total">0</span>
 </div>
-
-<button onclick="sendWhatsApp()">📱 Place Order</button>
+<button onclick="sendWhatsApp()">Place Order</button>
 </div>
 
-</div>
-
-<!-- Firebase -->
+<!-- Firebase v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
