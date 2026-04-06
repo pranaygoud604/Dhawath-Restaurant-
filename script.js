@@ -84,11 +84,8 @@ function sendWhatsApp(){
     return;
   }
 
-  let orderId = "ORD" + Math.floor(Math.random()*10000);
-
-  // 🔥 Save to Firebase
+  // 🔥 SAVE TO FIREBASE (using table number)
   db.ref("orders").push({
-    orderId: orderId,
     table: table,
     items: items,
     total: total,
@@ -97,17 +94,17 @@ function sendWhatsApp(){
     date: new Date().toLocaleDateString()
   });
 
-  alert("✅ Order Placed!\nOrder ID: " + orderId);
+  alert("✅ Order Placed for Table: " + table);
 
-  // 📱 WhatsApp
-  let finalText = "Order ID: "+orderId+"%0A"
-                + "Table: "+table+"%0A"
+  // 📱 WhatsApp message
+  let finalText = "Table: "+table+"%0A"
                 + text
                 + "Total: ₹"+total;
 
-  window.open("https://wa.me/+917330100133?text="+finalText, "_blank");
+  window.open("https://wa.me/917330100133?text="+finalText);
 
   clearCart();
+
 }
 
 // 💳 UPI Payment
