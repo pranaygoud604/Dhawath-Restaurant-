@@ -245,6 +245,57 @@ function markPaid(id){
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
 }
+
+db.ref("dailyReports").on("value", snapshot => {
+
+  let data = snapshot.val();
+
+  if(!data){
+    document.getElementById("todayReport").innerHTML = "No data";
+    document.getElementById("history").innerHTML = "";
+    return;
+  }
+
+  // 📅 TODAY KEY
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  let todayHTML = "";
+  let historyHTML = "";
+
+  // 🔁 LOOP ALL DAYS
+  let entries = Object.entries(data).reverse();
+
+  entries.forEach(([date, report]) => {
+
+    let card = `
+      <div class="card">
+        <div class="table">${date}</div>
+
+        <div class="item">🧾 Orders: ${report.totalOrders}</div>
+        <div class="item">💰 Revenue: ₹${report.revenue}</div>
+        <div class="item">⏳ Pending: ₹${report.pending}</div>
+
+        <div class="time">${report.lastUpdated}</div>
+      </div>
+    `;
+
+    if(date === todayKey){
+      todayHTML = card;
+    } else {
+      historyHTML += card;
+    }
+
+  });
+
+  // ✅ SHOW TODAY
+  document.getElementById("todayReport").innerHTML =
+    todayHTML || "No today's data";
+
+  // ✅ SHOW HISTORY
+  document.getElementById("history").innerHTML =
+    historyHTML || "No previous data";
+
+});
 </script>
 
 </body>
