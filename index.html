@@ -117,9 +117,10 @@ button {
   <div id="bill"></div>
   <h3 id="total">Total: ₹0</h3>
 
-  <button onclick="payNow()">💳 Pay via UPI</button>
+  
   <button onclick="placeOrder()">📲 Send Order</button>
   <button onclick="clearTable()">🧹 Clear Table</button>
+  <button onclick="payNow()">💳 Pay via UPI</button>
 </div>
 
 <script>
@@ -202,7 +203,7 @@ function placeOrder() {
   localStorage.setItem("orders", JSON.stringify(orders));
 
   // WhatsApp
-  window.open("https://wa.me/917330100133?text=" + msg);
+  window.open("https://wa.me/+917330100133?text=" + msg);
 }
 
 // UPI payment + mark paid
