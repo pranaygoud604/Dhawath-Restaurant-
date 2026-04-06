@@ -1,77 +1,132 @@
-<script>
+// 🔥 Firebase (ADD THIS FIRST)
 const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-  authDomain: "dhawath-restaurant.firebaseapp.com",
-  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+ apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+ authDomain: "dhawath-restaurant.firebaseapp.com",
+ databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-db.ref("orders").on("value", snapshot => {
+// 🛒 CART
+let cart = {
+ biryani:{name:"Chicken Biryani",price:180,qty:0},
+ mutton:{name:"Mutton Biryani",price:250,qty:0},
+ noodles:{name:"Noodles",price:120,qty:0},
+ burger:{name:"Burger",price:100,qty:0},
+ rice:{name:"Fried Rice",price:140,qty:0},
+ shawarma:{name:"Shawarma",price:130,qty:0}
+};
 
-  let data = snapshot.val();
-  let html = "";
+// 🔔 TOAST SAFE
+function showToast(msg){
+ let t=document.getElementById("toast");
+ if(!t) return; // prevent crash
 
-  if(!data){
-    document.getElementById("orders").innerHTML = "No orders";
-    return;
-  }
+ t.innerText=msg;
+t.style.display="block";
 
-  // 🔥 Convert to array + sort latest first
-  let orders = Object.entries(data).sort((a,b)=>{
-    return (b[1].timestamp || 0) - (a[1].timestamp || 0);
-  });
+ setTimeout(()=>t.style.display="none",2000);
+}
 
-  orders.forEach(([id, order]) => {
+// ➕ ADD ITEM
+function addItem(item){
+ cart[item].qty=1;
+ updateControls(item);
+ updateTotal();
+ showToast("Added "+cart[item].name);
+}
 
-    let statusClass = "pending";
-    if(order.status==="cooking") statusClass="cooking";
-    if(order.status==="done") statusClass="done";
+// ➖➕ CHANGE QTY
+function changeQty(item,change){
+ cart[item].qty+=change;
 
-    // 🔥 ITEMS DISPLAY
-    let itemsHTML = "";
-    if(order.items){
-      for(let key in order.items){
-        let item = order.items[key];
-        if(item.qty > 0){
-          itemsHTML += `<div class="item">${item.name} x ${item.qty}</div>`;
-        }
-      }
-    }
+ if(cart[item].qty<=0){
+ cart[item].qty=0;
 
-    html += `
-    <div class="card">
-      <div class="table">Table ${order.table}</div>
+ let el=document.getElementById("control-"+item);
+ if(el){
+ el.innerHTML =
+ `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
+ }
 
-      <div>${order.time || ""}</div>
+ } else {
+ updateControls(item);
+ }
 
-      ${itemsHTML}
+ updateTotal();
+}
 
-      <div class="total">₹${order.total}</div>
+// 🔄 UPDATE CONTROL UI SAFE
+function updateControls(item){
+ let el=document.getElementById("control-"+item);
+ if(!el) return;
 
-      <div class="status ${statusClass}">
-        ${order.status}
-      </div>
+ let q=cart[item].qty;
 
-      <div class="buttons">
-        <button class="accept" onclick="updateStatus('${id}','cooking')">Cooking</button>
-        <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
-        <button class="delete" onclick="deleteOrder('${id}')">Delete</button>
-      </div>
-    </div>`;
-  });
+ el.innerHTML = `
+ <div class="qty-control">
+ <button onclick="changeQty('${item}',-1)">−</button>
+ <span>${q}</span>
+ <button onclick="changeQty('${item}',1)">+</button>
+ </div>
+ `;
+}
 
-  document.getElementById("orders").innerHTML = html;
+// 💰 TOTAL SAFE
+function updateTotal(){
+ let total=0,count=0;
+
+ for(let k in cart){
+ total+=cart[k].price*cart[k].qty;
+ count+=cart[k].qty;
+ }
+
+ let totalEl=document.getElementById("total");
+ let countEl=document.getElementById("cartCount");
+ let cartBar=document.getElementById("cartBar");
+
+ if(totalEl) totalEl.innerText=total;
+ if(countEl) countEl.innerText=count+" items";
+
+ if(cartBar){
+cartBar.style.display = count>0 ? "flex" : "none";
+ }
+}
+
+// 📦 ORDER
+function sendWhatsApp(){
+ let table=document.getElementById("table").value;
+
+ let total=0,text="";
+
+ for(let k in cart){
+ if(cart[k].qty>0){
+ let itemTotal=cart[k].price*cart[k].qty;
+ total+=itemTotal;
+ text+=cart[k].name+" - ₹"+itemTotal+"%0A";
+ }
+ }
+
+ if(!table || total===0){
+ alert("Enter table & select items");
+ return;
+ }
+
+ // SAVE FIREBASE
+ db.ref("orders").push({
+  table,
+  items: cart,   // 🔥 ADD THIS LINE
+  total,
+  status:"pending",
+  time: new Date().toLocaleString(),
+  timestamp: Date.now() // 🔥 for sorting
 });
 
-// UPDATE STATUS
-function updateStatus(id, status){
-  db.ref("orders/"+id).update({ status });
-}
+ let msg =
+ "🍽️ *Table "+table+" Order*%0A%0A"+
+ text+
+ "%0ATotal: ₹"+total;
 
-// DELETE
-function deleteOrder(id){
-  db.ref("orders/"+id).remove();
+window.open("https://wa.me/917330100133?text="+msg);
 }
-</script>
