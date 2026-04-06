@@ -15,7 +15,7 @@ try {
   console.log("Firebase error:", e);
 }
 
-// 🛒 CART DATA
+// 🛒 CART
 let cart = {
   biryani:{name:"Chicken Biryani",price:180,qty:0},
   mutton:{name:"Mutton Biryani",price:250,qty:0},
@@ -25,38 +25,28 @@ let cart = {
   shawarma:{name:"Shawarma",price:130,qty:0}
 };
 
-// 🔔 TOAST
 function showToast(msg){
-  let t = document.getElementById("toast");
+  let t=document.getElementById("toast");
   if(!t) return;
-
-  t.innerText = msg;
-  t.style.display = "block";
-
+  t.innerText=msg;
+  t.style.display="block";
   setTimeout(()=>t.style.display="none",2000);
 }
 
-// ➕ ADD ITEM
 function addItem(item){
-  cart[item].qty = 1;
+  cart[item].qty=1;
   updateControls(item);
   updateTotal();
-  showToast("Added " + cart[item].name);
+  showToast("Added "+cart[item].name);
 }
 
-// ➖➕ CHANGE QTY
-function changeQty(item, change){
-  cart[item].qty += change;
+function changeQty(item,change){
+  cart[item].qty+=change;
 
-  if(cart[item].qty <= 0){
-    cart[item].qty = 0;
-
-    let el = document.getElementById("control-"+item);
-    if(el){
-      el.innerHTML =
-        `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
-    }
-
+  if(cart[item].qty<=0){
+    cart[item].qty=0;
+    document.getElementById("control-"+item).innerHTML =
+      `<button class="add-btn" onclick="addItem('${item}')">ADD</button>`;
   } else {
     updateControls(item);
   }
@@ -64,97 +54,76 @@ function changeQty(item, change){
   updateTotal();
 }
 
-// 🔄 UPDATE BUTTON UI
 function updateControls(item){
-  let el = document.getElementById("control-"+item);
-  if(!el) return;
+  let q=cart[item].qty;
 
-  let q = cart[item].qty;
-
-  el.innerHTML = `
+  document.getElementById("control-"+item).innerHTML=`
     <div class="qty-control">
       <button onclick="changeQty('${item}',-1)">−</button>
       <span>${q}</span>
       <button onclick="changeQty('${item}',1)">+</button>
-    </div>
-  `;
+    </div>`;
 }
 
-// 💰 UPDATE TOTAL
 function updateTotal(){
-  let total = 0;
-  let count = 0;
+  let total=0,count=0;
 
   for(let k in cart){
-    total += cart[k].price * cart[k].qty;
-    count += cart[k].qty;
+    total+=cart[k].price*cart[k].qty;
+    count+=cart[k].qty;
   }
 
-  let totalEl = document.getElementById("total");
-  let countEl = document.getElementById("cartCount");
-  let cartBar = document.getElementById("cartBar");
+  document.getElementById("total").innerText=total;
+  document.getElementById("cartCount").innerText=count+" items";
 
-  if(totalEl) totalEl.innerText = total;
-  if(countEl) countEl.innerText = count + " items";
-
-  if(cartBar){
-    cartBar.style.display = count > 0 ? "flex" : "none";
-  }
+  document.getElementById("cartBar").style.display =
+    count>0 ? "flex" : "none";
 }
 
-// 📦 PLACE ORDER (NO WHATSAPP)
+// 📦 PLACE ORDER
 function placeOrder(){
 
-  let table = document.getElementById("table").value;
+  let table=document.getElementById("table").value;
 
-  let total = 0;
-  let filteredItems = {};
+  let total=0;
+  let filteredItems={};
 
   for(let key in cart){
+    let item=cart[key];
 
-    let item = cart[key];
+    if(item.qty>0){
+      total+=item.price*item.qty;
 
-    if(item.qty > 0){
-
-      total += item.price * item.qty;
-
-      filteredItems[key] = {
-        name: item.name,
-        qty: item.qty,
-        price: item.price
+      filteredItems[key]={
+        name:item.name,
+        qty:item.qty,
+        price:item.price
       };
     }
   }
 
-  // ❌ VALIDATION
-  if(!table || total === 0){
+  if(!table || total===0){
     alert("Enter table & select items");
     return;
   }
 
-  // 🔥 SAVE ORDER TO FIREBASE
   if(db){
     db.ref("orders").push({
-      table: table,
-      items: filteredItems,
-      total: total,
-      status: "pending",
-      time: new Date().toLocaleString(),
-      timestamp: Date.now()
+      table,
+      items:filteredItems,
+      total,
+      status:"pending",
+      time:new Date().toLocaleString(),
+      timestamp:Date.now()
     });
   }
 
-  showToast("✅ Order Placed!");
+  showToast("Order Placed!");
 
-  // 🧹 CLEAR CART
   for(let key in cart){
-    cart[key].qty = 0;
-
-    let el = document.getElementById("control-"+key);
-    if(el){
-      el.innerHTML =
-        `<button class="add-btn" onclick="addItem('${key}')">ADD</button>`;
-    }
+    cart[key].qty=0;
+    document.getElementById("control-"+key).innerHTML =
+      `<button class="add-btn" onclick="addItem('${key}')">ADD</button>`;
   }
 
   updateTotal();
