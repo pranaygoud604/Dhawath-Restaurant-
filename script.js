@@ -115,10 +115,12 @@ function sendWhatsApp(){
 
   // SAVE FIREBASE
   db.ref("orders").push({
-    table,
-    total,
-    status:"pending",
-    time:new Date().toLocaleString()
+  table,
+  items: cart,              // ✅ ADD THIS
+  total,
+  status: "pending",
+  time: new Date().toLocaleString(),
+  timestamp: Date.now()     // ✅ ADD THIS
   });
 
   let msg =
