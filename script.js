@@ -7,6 +7,7 @@ const firebaseConfig = {
   messagingSenderId: "896647998152",
   appId: "1:896647998152:web:472c242233b07eea53d3fd",
   measurementId: "G-GH9496VVXZ"
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com",
 };
 
 // Initialize Firebase
