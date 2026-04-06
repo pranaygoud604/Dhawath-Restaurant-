@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhawath Restaurant</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #111;
+  color: white;
+}
+
+header {
+  text-align: center;
+  padding: 15px;
+  background: black;
+}
+
+input {
+  padding: 10px;
+  margin: 10px;
+  width: 80%;
+  border-radius: 5px;
+  border: none;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+button {
+  margin-top: 5px;
+  padding: 8px;
+  background: #f4b400;
+  border: none;
+  border-radius: 5px;
+}
+
+.cart {
+  background: black;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.top-buttons {
+  text-align:center;
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  Dhawath Restaurant 🍽️ <br>
+  <small>Scan • Order • Pay</small>
+</header>
+
+<div style="text-align:center;">
+  <input type="text" id="table" placeholder="Enter Table Number" oninput="updateBill()">
+</div>
+
+<div class="menu">
+
+<div class="card">
+<h3>Chicken Biryani</h3>
+<p>₹180</p>
+<button onclick="addItem('Chicken Biryani',180)">Add</button>
+</div>
+
+<div class="card">
+<h3>Mutton Biryani</h3>
+<p>₹250</p>
+<button onclick="addItem('Mutton Biryani',250)">Add</button>
+</div>
+
+<div class="card">
+<h3>Noodles</h3>
+<p>₹120</p>
+<button onclick="addItem('Noodles',120)">Add</button>
+</div>
+
+<div class="card">
+<h3>Burger</h3>
+<p>₹100</p>
+<button onclick="addItem('Burger',100)">Add</button>
+</div>
+
+<div class="card">
+<h3>Cool Drinks</h3>
+<p>₹40</p>
+<button onclick="addItem('Cool Drinks',40)">Add</button>
+</div>
+
+</div>
+
+<div class="top-buttons">
+  <button onclick="viewOrders()">📊 View Orders</button>
+</div>
+
+<div class="cart">
+  <div id="bill"></div>
+  <h3 id="total">Total: ₹0</h3>
+
+  <button onclick="payNow()">💳 Pay via UPI</button>
+  <button onclick="placeOrder()">📲 Send Order</button>
+  <button onclick="clearTable()">🧹 Clear Table</button>
+</div>
+
+<script>
+
+// Running table orders
+let tableOrders = JSON.parse(localStorage.getItem("tableOrders")) || {};
+
+// Add item
+function addItem(name, price) {
+  let table = document.getElementById("table").value;
+
+  if(table === ""){
+    alert("Enter table number first");
+    return;
+  }
+
+  if(!tableOrders[table]){
+    tableOrders[table] = [];
+  }
+
+  tableOrders[table].push({name, price});
+  localStorage.setItem("tableOrders", JSON.stringify(tableOrders));
+
+  updateBill();
+}
+
+// Update bill
+function updateBill() {
+  let table = document.getElementById("table").value;
+  let billText = "";
+  let total = 0;
+
+  if(tableOrders[table]){
+    tableOrders[table].forEach(item => {
+      billText += item.name + " - ₹" + item.price + "<br>";
+      total += item.price;
+    });
+  }
+
+  document.getElementById("bill").innerHTML = billText;
+  document.getElementById("total").innerText = "Total: ₹" + total;
+}
+
+// Send order + store history
+function placeOrder() {
+  let table = document.getElementById("table").value;
+
+  if(table === ""){
+    alert("Enter table number");
+    return;
+  }
+
+  if(!tableOrders[table] || tableOrders[table].length === 0){
+    alert("No items");
+    return;
+  }
+
+  let items = tableOrders[table];
+  let total = 0;
+  let msg = "🍽️ *Table " + table + " Order*%0A%0A";
+
+  items.forEach(item => {
+    msg += item.name + " - ₹" + item.price + "%0A";
+    total += item.price;
+  });
+
+  msg += "%0ATotal: ₹" + total;
+
+  // Save order history
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  orders.push({
+    table: table,
+    items: items,
+    total: total,
+    time: new Date().toLocaleString(),
+    status: "Pending"
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  // WhatsApp
+  window.open("https://wa.me/91XXXXXXXXXX?text=" + msg);
+}
+
+// UPI payment + mark paid
+function payNow() {
+  let table = document.getElementById("table").value;
+  let total = 0;
+
+  if(tableOrders[table]){
+    tableOrders[table].forEach(item => total += item.price);
+  }
+
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  orders.forEach(order => {
+    if(order.table === table){
+      order.status = "Paid";
+    }
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  let upi = "upi://pay?pa=yourupiid@upi&pn=DhawathRestaurant&am=" + total + "&cu=INR";
+
+  window.open(upi);
+}
+
+// Clear table
+function clearTable() {
+  let table = document.getElementById("table").value;
+
+  if(tableOrders[table]){
+    delete tableOrders[table];
+    localStorage.setItem("tableOrders", JSON.stringify(tableOrders));
+    updateBill();
+    alert("Table cleared ✅");
+  }
+}
+
+// View all orders
+function viewOrders() {
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  let text = "All Orders:\n\n";
+
+  orders.forEach((o, i) => {
+    text += "Order " + (i+1) + "\n";
+    text += "Table: " + o.table + "\n";
+    text += "Total: ₹" + o.total + "\n";
+    text += "Status: " + o.status + "\n";
+    text += "Time: " + o.time + "\n\n";
+  });
+
+  alert(text);
+}
+
+</script>
+
+</body>
+</html>
