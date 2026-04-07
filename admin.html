@@ -151,7 +151,17 @@ db.ref("orders").on("value", snapshot => {
   let orders = Object.entries(data).reverse();
 
   if(orders.length > previousCount){
-    document.getElementById("sound").play();
+
+  // 🔔 Sound
+  document.getElementById("sound").play();
+
+  // 📳 Vibration (mobile)
+  if(navigator.vibrate){
+    navigator.vibrate([200,100,200]);
+  }
+
+  // 🆕 Alert popup
+  alert("🆕 New Order Received!");
   }
   previousCount = orders.length;
 
