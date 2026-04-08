@@ -3,12 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <h1>Kitchen Dashboard</h1>
-  <button onclick="logout()" style="padding:8px 12px; background:red; color:white; border:none; border-radius:5px;">
-    Logout
-  </button>
-</div>
+
+<title>Kitchen Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -24,13 +20,25 @@ body{
 /* HEADER */
 .header{
   padding:15px;
-  text-align:center;
   background:#1c1c1c;
-  font-size:20px;
-  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-/* SECTION TITLE */
+.header h2{
+  font-size:18px;
+}
+
+.logoutBtn{
+  padding:8px 12px;
+  background:red;
+  color:white;
+  border:none;
+  border-radius:6px;
+}
+
+/* SECTION */
 .section{
   padding:10px 15px;
   font-size:14px;
@@ -112,23 +120,34 @@ button{
 
 <body>
 
-<div class="header">🍽️ Kitchen Dashboard</div>
+<!-- HEADER -->
+<div class="header">
+  <h2>🍽️ Kitchen Dashboard</h2>
+  <button class="logoutBtn" onclick="logout()">Logout</button>
+</div>
+
+<!-- REPORT BUTTON -->
 <div style="padding:10px;text-align:center;">
   <button onclick="openReports()" 
     style="background:#fc8019;color:white;padding:10px 15px;border:none;border-radius:8px;">
     📊 View Reports
   </button>
 </div>
+
+<!-- PAYMENTS -->
 <div class="section">💰 Pending Payments</div>
 <div class="container" id="payments"></div>
 
+<!-- ORDERS -->
 <div class="section">🔥 Live Orders</div>
 <div class="container" id="orders"></div>
 
 <audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -138,11 +157,27 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.database();
+const auth = firebase.auth();
+
+// 🔐 PROTECT ADMIN PAGE
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
+
+// 🔓 LOGOUT
+function logout() {
+  auth.signOut().then(() => {
+    window.location.href = "login.html";
+  });
+}
 
 let previousCount = 0;
 
-// 🔥 LIVE ORDERS + SAVE DAILY
+// 🔥 LIVE ORDERS
 db.ref("orders").on("value", snapshot => {
 
   let data = snapshot.val();
@@ -156,24 +191,18 @@ db.ref("orders").on("value", snapshot => {
   let orders = Object.entries(data).reverse();
 
   if(orders.length > previousCount){
-
-  // 🔔 Sound
-  document.getElementById("sound").play();
-
-  // 📳 Vibration (mobile)
-  if(navigator.vibrate){
-    navigator.vibrate([200,100,200]);
+    document.getElementById("sound").play();
+    if(navigator.vibrate){
+      navigator.vibrate([200,100,200]);
+    }
+    alert("🆕 New Order Received!");
   }
 
-  // 🆕 Alert popup
-  alert("🆕 New Order Received!");
-  }
   previousCount = orders.length;
 
   let orderHTML = "";
   let paymentHTML = "";
 
-  // 📊 DAILY TOTALS
   let totalOrders = 0;
   let totalRevenue = 0;
   let pendingAmount = 0;
@@ -193,7 +222,6 @@ db.ref("orders").on("value", snapshot => {
       pendingAmount += order.total || 0;
     }
 
-    // ITEMS
     let itemsHTML = "";
     if(order.items){
       for(let key in order.items){
@@ -238,7 +266,6 @@ db.ref("orders").on("value", snapshot => {
   document.getElementById("orders").innerHTML = orderHTML || "No active orders";
   document.getElementById("payments").innerHTML = paymentHTML || "No pending payments";
 
-  // 💾 SAVE DAILY REPORT
   let todayKey = new Date().toISOString().split("T")[0];
 
   db.ref("dailyReports/" + todayKey).set({
@@ -247,52 +274,6 @@ db.ref("orders").on("value", snapshot => {
     pending: pendingAmount,
     lastUpdated: new Date().toLocaleString()
   });
-
-});
-
-// 📊 LOAD REPORTS
-db.ref("dailyReports").on("value", snapshot => {
-
-  let data = snapshot.val();
-
-  if(!data){
-    document.getElementById("todayReport").innerHTML = "No data";
-    document.getElementById("history").innerHTML = "";
-    return;
-  }
-
-  let todayKey = new Date().toISOString().split("T")[0];
-
-  let todayHTML = "";
-  let historyHTML = "";
-
-  let entries = Object.entries(data).reverse();
-
-  entries.forEach(([date, report]) => {
-
-    let card = `
-      <div class="card">
-        <div class="table">${date}</div>
-        <div class="item">🧾 Orders: ${report.totalOrders}</div>
-        <div class="item">💰 Revenue: ₹${report.revenue}</div>
-        <div class="item">⏳ Pending: ₹${report.pending}</div>
-        <div class="time">${report.lastUpdated}</div>
-      </div>
-    `;
-
-    if(date === todayKey){
-      todayHTML = card;
-    } else {
-      historyHTML += card;
-    }
-
-  });
-
-  document.getElementById("todayReport").innerHTML =
-    todayHTML || "No today's data";
-
-  document.getElementById("history").innerHTML =
-    historyHTML || "No previous data";
 
 });
 
@@ -308,11 +289,9 @@ function markPaid(id){
 function deleteOrder(id){
   db.ref("orders/"+id).remove();
 }
+
 function openReports(){
   window.location.href = "reports.html";
-}
-function logout() {
-  window.location.href = "login.html";
 }
 </script>
 
