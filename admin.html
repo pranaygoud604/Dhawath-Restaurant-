@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard</title>
+<title>Dhawath Admin</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -15,32 +15,55 @@ body{
   font-family:'Poppins',sans-serif;
   background:#0f0f0f;
   color:white;
+  display:flex;
 }
 
-/* HEADER */
-.header{
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  background:#1c1c1c;
+  height:100vh;
+  padding:20px;
+  position:fixed;
+}
+
+.sidebar h2{
+  color:#fc8019;
+  margin-bottom:20px;
+}
+
+.sidebar a{
+  display:block;
+  color:#aaa;
+  text-decoration:none;
+  margin:10px 0;
+  font-size:14px;
+}
+
+.sidebar a:hover{
+  color:white;
+}
+
+/* MAIN */
+.main{
+  margin-left:220px;
+  width:100%;
+}
+
+/* TOPBAR */
+.topbar{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:12px 20px;
+  padding:15px 20px;
   background:#1c1c1c;
-  position:sticky;
-  top:0;
-  z-index:100;
   box-shadow:0 2px 10px rgba(0,0,0,0.6);
-}
-
-.logo{
-  font-size:18px;
-  font-weight:600;
-  color:#fc8019;
 }
 
 .logoutBtn{
   background:#ff3b3b;
   border:none;
-  padding:8px 14px;
-  border-radius:8px;
+  padding:6px 12px;
+  border-radius:6px;
   color:white;
   cursor:pointer;
 }
@@ -48,45 +71,44 @@ body{
 /* STATS */
 .stats{
   display:flex;
-  gap:10px;
-  padding:15px;
+  gap:15px;
+  padding:20px;
 }
 
 .stat{
   flex:1;
   background:#1e1e1e;
-  padding:15px;
+  padding:20px;
   border-radius:12px;
   text-align:center;
 }
 
 .stat h3{
-  font-size:14px;
   color:#aaa;
+  font-size:14px;
 }
 
 .stat p{
-  font-size:18px;
-  font-weight:bold;
+  font-size:22px;
   color:#fc8019;
+  font-weight:bold;
 }
 
 /* SECTION */
 .section{
-  padding:10px 15px;
-  font-size:14px;
+  padding:10px 20px;
   color:#fc8019;
 }
 
 /* CARDS */
 .container{
-  padding:15px;
+  padding:20px;
 }
 
 .card{
   background:#1e1e1e;
   padding:15px;
-  border-radius:16px;
+  border-radius:12px;
   margin-bottom:15px;
   transition:0.2s;
 }
@@ -96,38 +118,19 @@ body{
 }
 
 .table{
-  font-size:18px;
+  font-size:16px;
   color:#fc8019;
 }
 
-.time{
-  font-size:12px;
-  color:#aaa;
-}
-
 .item{
-  font-size:14px;
+  font-size:13px;
   margin:4px 0;
 }
 
 .total{
   margin-top:8px;
-  font-weight:bold;
 }
 
-.status{
-  margin-top:8px;
-  padding:5px 10px;
-  border-radius:6px;
-  font-size:12px;
-}
-
-.pending{background:#ff9800;}
-.cooking{background:#2196f3;}
-.done{background:#4caf50;}
-.unpaid{background:#ff9800;}
-
-/* BUTTONS */
 .buttons{
   display:flex;
   gap:8px;
@@ -138,10 +141,10 @@ button{
   flex:1;
   padding:8px;
   border:none;
-  border-radius:8px;
+  border-radius:6px;
   font-size:12px;
-  color:white;
   cursor:pointer;
+  color:white;
 }
 
 .cookBtn{background:#2196f3;}
@@ -153,11 +156,22 @@ button{
 
 <body>
 
-<div class="header">
-  <div class="logo">🍽️ Dhawath Admin</div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>🍽️ Dhawath</h2>
+  <a href="#">Dashboard</a>
+  <a href="#" onclick="openReports()">Reports</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+  <div>Admin Dashboard</div>
   <button class="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
+<!-- STATS -->
 <div class="stats">
   <div class="stat">
     <h3>Orders</h3>
@@ -179,7 +193,7 @@ button{
 <div class="section">🔥 Live Orders</div>
 <div class="container" id="orders"></div>
 
-<audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -197,39 +211,27 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
-// 🔐 AUTH
 auth.onAuthStateChanged(user=>{
-  if(!user) window.location.href="login.html";
+  if(!user) location.href="login.html";
 });
 
-// LOGOUT
 function logout(){
   auth.signOut().then(()=>location.href="login.html");
 }
 
-let prev = 0;
-
 db.ref("orders").on("value", snap=>{
-  let data = snap.val();
+  let data=snap.val();
   if(!data) return;
 
-  let orders = Object.entries(data).reverse();
+  let orders=Object.entries(data).reverse();
 
-  if(orders.length>prev){
-    document.getElementById("sound").play();
-  }
-  prev = orders.length;
-
-  let orderHTML="", paymentHTML="";
   let total=0, revenue=0, pending=0;
+  let orderHTML="", paymentHTML="";
 
   orders.forEach(([id,o])=>{
-    let status=o.status||"pending";
-    let pay=o.payment||"unpaid";
-
     total++;
 
-    if(pay==="paid") revenue+=o.total||0;
+    if(o.payment==="paid") revenue+=o.total||0;
     else pending+=o.total||0;
 
     let items="";
@@ -238,13 +240,12 @@ db.ref("orders").on("value", snap=>{
       if(it.qty>0) items+=`<div class="item">${it.name} x ${it.qty}</div>`;
     }
 
-    if(status!=="done"){
+    if(o.status!=="done"){
       orderHTML+=`
       <div class="card">
         <div class="table">Table ${o.table}</div>
         ${items}
         <div class="total">₹${o.total}</div>
-        <div class="status ${status}">${status}</div>
         <div class="buttons">
           <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
           <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
@@ -252,7 +253,7 @@ db.ref("orders").on("value", snap=>{
       </div>`;
     }
 
-    if(status==="done" && pay!=="paid"){
+    if(o.status==="done" && o.payment!=="paid"){
       paymentHTML+=`
       <div class="card">
         <div class="table">Table ${o.table}</div>
@@ -277,6 +278,10 @@ function updateStatus(id,s){
 
 function markPaid(id){
   db.ref("orders/"+id).update({payment:"paid"});
+}
+
+function openReports(){
+  window.location.href="reports.html";
 }
 </script>
 
