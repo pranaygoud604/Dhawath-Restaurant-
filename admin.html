@@ -19,7 +19,12 @@ onAuthStateChanged(auth, (user) => {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kitchen Dashboard</title>
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Kitchen Dashboard</h1>
+  <button onclick="logout()" style="padding:8px 12px; background:red; color:white; border:none; border-radius:5px;">
+    Logout
+  </button>
+</div>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
