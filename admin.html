@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kitchen Dashboard</title>
+<title>Admin Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -13,29 +13,62 @@
 
 body{
   font-family:'Poppins',sans-serif;
-  background:#121212;
+  background:#0f0f0f;
   color:white;
 }
 
 /* HEADER */
 .header{
-  padding:15px;
-  background:#1c1c1c;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:12px 20px;
+  background:#1c1c1c;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 10px rgba(0,0,0,0.6);
 }
 
-.header h2{
+.logo{
   font-size:18px;
+  font-weight:600;
+  color:#fc8019;
 }
 
 .logoutBtn{
-  padding:8px 12px;
-  background:red;
-  color:white;
+  background:#ff3b3b;
   border:none;
-  border-radius:6px;
+  padding:8px 14px;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  gap:10px;
+  padding:15px;
+}
+
+.stat{
+  flex:1;
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.stat h3{
+  font-size:14px;
+  color:#aaa;
+}
+
+.stat p{
+  font-size:18px;
+  font-weight:bold;
+  color:#fc8019;
 }
 
 /* SECTION */
@@ -45,30 +78,31 @@ body{
   color:#fc8019;
 }
 
-/* CONTAINER */
+/* CARDS */
 .container{
   padding:15px;
 }
 
-/* CARD */
 .card{
   background:#1e1e1e;
-  border-radius:16px;
   padding:15px;
+  border-radius:16px;
   margin-bottom:15px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:translateY(-3px);
 }
 
 .table{
   font-size:18px;
-  font-weight:600;
   color:#fc8019;
 }
 
 .time{
   font-size:12px;
   color:#aaa;
-  margin-bottom:8px;
 }
 
 .item{
@@ -77,16 +111,15 @@ body{
 }
 
 .total{
-  margin-top:10px;
+  margin-top:8px;
   font-weight:bold;
 }
 
 .status{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:12px;
   margin-top:8px;
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:12px;
 }
 
 .pending{background:#ff9800;}
@@ -94,21 +127,21 @@ body{
 .done{background:#4caf50;}
 .unpaid{background:#ff9800;}
 
+/* BUTTONS */
 .buttons{
   display:flex;
   gap:8px;
-  flex-wrap:wrap;
   margin-top:10px;
 }
 
 button{
   flex:1;
-  border:none;
   padding:8px;
+  border:none;
   border-radius:8px;
   font-size:12px;
-  font-weight:600;
   color:white;
+  cursor:pointer;
 }
 
 .cookBtn{background:#2196f3;}
@@ -120,43 +153,43 @@ button{
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="left">
-    <span class="logo">🍽️ Dhawath</span>
-    <span class="title">Admin Dashboard</span>
-  </div>
+  <div class="logo">🍽️ Dhawath Admin</div>
   <button class="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
-<!-- REPORT BUTTON -->
-<div style="padding:10px;text-align:center;">
-  <button onclick="openReports()" 
-    style="background:#fc8019;color:white;padding:10px 15px;border:none;border-radius:8px;">
-    📊 View Reports
-  </button>
+<div class="stats">
+  <div class="stat">
+    <h3>Orders</h3>
+    <p id="totalOrders">0</p>
+  </div>
+  <div class="stat">
+    <h3>Revenue</h3>
+    <p id="revenue">₹0</p>
+  </div>
+  <div class="stat">
+    <h3>Pending</h3>
+    <p id="pending">₹0</p>
+  </div>
 </div>
 
-<!-- PAYMENTS -->
 <div class="section">💰 Pending Payments</div>
 <div class="container" id="payments"></div>
 
-<!-- ORDERS -->
 <div class="section">🔥 Live Orders</div>
 <div class="container" id="orders"></div>
 
 <audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-  authDomain: "dhawath-restaurant.firebaseapp.com",
-  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH",
+  databaseURL: "YOUR_DB_URL"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -164,137 +197,86 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
-// 🔐 PROTECT ADMIN PAGE
-auth.onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "login.html";
-  }
+// 🔐 AUTH
+auth.onAuthStateChanged(user=>{
+  if(!user) window.location.href="login.html";
 });
 
-// 🔓 LOGOUT
-function logout() {
-  auth.signOut().then(() => {
-    window.location.href = "login.html";
-  });
+// LOGOUT
+function logout(){
+  auth.signOut().then(()=>location.href="login.html");
 }
 
-let previousCount = 0;
+let prev = 0;
 
-// 🔥 LIVE ORDERS
-db.ref("orders").on("value", snapshot => {
-
-  let data = snapshot.val();
-
-  if(!data){
-    document.getElementById("orders").innerHTML = "No orders";
-    document.getElementById("payments").innerHTML = "";
-    return;
-  }
+db.ref("orders").on("value", snap=>{
+  let data = snap.val();
+  if(!data) return;
 
   let orders = Object.entries(data).reverse();
 
-  if(orders.length > previousCount){
+  if(orders.length>prev){
     document.getElementById("sound").play();
-    if(navigator.vibrate){
-      navigator.vibrate([200,100,200]);
-    }
-    alert("🆕 New Order Received!");
   }
+  prev = orders.length;
 
-  previousCount = orders.length;
+  let orderHTML="", paymentHTML="";
+  let total=0, revenue=0, pending=0;
 
-  let orderHTML = "";
-  let paymentHTML = "";
+  orders.forEach(([id,o])=>{
+    let status=o.status||"pending";
+    let pay=o.payment||"unpaid";
 
-  let totalOrders = 0;
-  let totalRevenue = 0;
-  let pendingAmount = 0;
+    total++;
 
-  orders.forEach(([id, order]) => {
+    if(pay==="paid") revenue+=o.total||0;
+    else pending+=o.total||0;
 
-    if(!order) return;
-
-    let status = order.status || "pending";
-    let payment = order.payment || "unpaid";
-
-    totalOrders++;
-
-    if(payment === "paid"){
-      totalRevenue += order.total || 0;
-    } else {
-      pendingAmount += order.total || 0;
+    let items="";
+    for(let k in o.items){
+      let it=o.items[k];
+      if(it.qty>0) items+=`<div class="item">${it.name} x ${it.qty}</div>`;
     }
 
-    let itemsHTML = "";
-    if(order.items){
-      for(let key in order.items){
-        let item = order.items[key];
-        if(item && item.qty > 0){
-          itemsHTML += `<div class="item">${item.name} x ${item.qty}</div>`;
-        }
-      }
-    }
-
-    if(status !== "done"){
-      orderHTML += `
+    if(status!=="done"){
+      orderHTML+=`
       <div class="card">
-        <div class="table">Table ${order.table}</div>
-        <div class="time">${order.time || ""}</div>
-        ${itemsHTML}
-        <div class="total">₹${order.total}</div>
+        <div class="table">Table ${o.table}</div>
+        ${items}
+        <div class="total">₹${o.total}</div>
         <div class="status ${status}">${status}</div>
         <div class="buttons">
           <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
           <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
-          <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
         </div>
       </div>`;
     }
 
-    if(status === "done" && payment !== "paid"){
-      paymentHTML += `
+    if(status==="done" && pay!=="paid"){
+      paymentHTML+=`
       <div class="card">
-        <div class="table">Table ${order.table}</div>
-        ${itemsHTML}
-        <div class="total">₹${order.total}</div>
-        <div class="status unpaid">Unpaid</div>
-        <div class="buttons">
-          <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
-        </div>
+        <div class="table">Table ${o.table}</div>
+        ${items}
+        <div class="total">₹${o.total}</div>
+        <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
       </div>`;
     }
-
   });
 
-  document.getElementById("orders").innerHTML = orderHTML || "No active orders";
-  document.getElementById("payments").innerHTML = paymentHTML || "No pending payments";
+  document.getElementById("orders").innerHTML=orderHTML;
+  document.getElementById("payments").innerHTML=paymentHTML;
 
-  let todayKey = new Date().toISOString().split("T")[0];
-
-  db.ref("dailyReports/" + todayKey).set({
-    totalOrders,
-    revenue: totalRevenue,
-    pending: pendingAmount,
-    lastUpdated: new Date().toLocaleString()
-  });
-
+  document.getElementById("totalOrders").innerText=total;
+  document.getElementById("revenue").innerText="₹"+revenue;
+  document.getElementById("pending").innerText="₹"+pending;
 });
 
-// FUNCTIONS
-function updateStatus(id, status){
-  db.ref("orders/"+id).update({ status });
+function updateStatus(id,s){
+  db.ref("orders/"+id).update({status:s});
 }
 
 function markPaid(id){
-  db.ref("orders/"+id).update({ payment:"paid" });
-}
-
-function deleteOrder(id){
-  db.ref("orders/"+id).remove();
-}
-
-function openReports(){
-  window.location.href = "reports.html";
+  db.ref("orders/"+id).update({payment:"paid"});
 }
 </script>
 
