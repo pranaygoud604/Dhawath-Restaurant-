@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f0f0f;
+  color:white;
+}
+
+/* HEADER */
+.header{
+  padding:15px;
+  text-align:center;
+  background:#1c1c1c;
+  font-size:20px;
+  font-weight:600;
+}
+
+/* SECTION */
+.section{
+  padding:12px 15px;
+  color:#fc8019;
+  font-size:14px;
+}
+
+/* CONTAINER */
+.container{
+  padding:10px 15px;
+}
+
+/* SUMMARY BOXES */
+.summary{
+  display:flex;
+  gap:10px;
+}
+
+.box{
+  flex:1;
+  background:#1c1c1c;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.box h3{
+  font-size:14px;
+  color:#aaa;
+}
+
+.box p{
+  font-size:18px;
+  font-weight:600;
+  margin-top:5px;
+}
+
+/* CARD */
+.card{
+  background:#1c1c1c;
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
+}
+
+.date{
+  color:#fc8019;
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+.item{
+  font-size:14px;
+  margin:4px 0;
+}
+
+.time{
+  font-size:12px;
+  color:#aaa;
+  margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">📊 Reports Dashboard</div>
+
+<!-- TODAY SUMMARY -->
+<div class="section">Today Summary</div>
+<div class="container">
+  <div class="summary" id="todaySummary"></div>
+</div>
+
+<!-- TODAY DETAILS -->
+<div class="section">Today Details</div>
+<div class="container" id="todayReport"></div>
+
+<!-- HISTORY -->
+<div class="section">Previous Days</div>
+<div class="container" id="history"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+db.ref("dailyReports").on("value", snapshot => {
+
+  let data = snapshot.val();
+
+  if(!data){
+    document.getElementById("todayReport").innerHTML = "No data";
+    return;
+  }
+
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  let todayHTML = "";
+  let historyHTML = "";
+
+  Object.entries(data).reverse().forEach(([date, report]) => {
+
+    // TODAY SUMMARY
+    if(date === todayKey){
+
+      document.getElementById("todaySummary").innerHTML = `
+        <div class="box">
+          <h3>Orders</h3>
+          <p>${report.totalOrders}</p>
+        </div>
+
+        <div class="box">
+          <h3>Revenue</h3>
+          <p style="color:#4caf50;">₹${report.revenue}</p>
+        </div>
+
+        <div class="box">
+          <h3>Pending</h3>
+          <p style="color:#ff9800;">₹${report.pending}</p>
+        </div>
+      `;
+
+      todayHTML = `
+        <div class="card">
+          <div class="date">${date}</div>
+
+          <div class="item">🧾 Orders: ${report.totalOrders}</div>
+          <div class="item">💰 Revenue: ₹${report.revenue}</div>
+          <div class="item">⏳ Pending: ₹${report.pending}</div>
+
+          <div class="time">${report.lastUpdated}</div>
+        </div>
+      `;
+
+    } else {
+
+      historyHTML += `
+        <div class="card">
+          <div class="date">${date}</div>
+
+          <div class="item">🧾 Orders: ${report.totalOrders}</div>
+          <div class="item">💰 Revenue: ₹${report.revenue}</div>
+          <div class="item">⏳ Pending: ₹${report.pending}</div>
+
+          <div class="time">${report.lastUpdated}</div>
+        </div>
+      `;
+
+    }
+
+  });
+
+  document.getElementById("todayReport").innerHTML = todayHTML || "No today data";
+  document.getElementById("history").innerHTML = historyHTML || "No previous data";
+
+});
+</script>
+
+</body>
+</html>

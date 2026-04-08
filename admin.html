@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#121212;
+  color:white;
+}
+
+/* HEADER */
+.header{
+  padding:15px;
+  text-align:center;
+  background:#1c1c1c;
+  font-size:20px;
+  font-weight:600;
+}
+
+/* SECTION TITLE */
+.section{
+  padding:10px 15px;
+  font-size:14px;
+  color:#fc8019;
+}
+
+/* CONTAINER */
+.container{
+  padding:15px;
+}
+
+/* CARD */
+.card{
+  background:#1e1e1e;
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+
+.table{
+  font-size:18px;
+  font-weight:600;
+  color:#fc8019;
+}
+
+.time{
+  font-size:12px;
+  color:#aaa;
+  margin-bottom:8px;
+}
+
+.item{
+  font-size:14px;
+  margin:4px 0;
+}
+
+.total{
+  margin-top:10px;
+  font-weight:bold;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.pending{background:#ff9800;}
+.cooking{background:#2196f3;}
+.done{background:#4caf50;}
+.unpaid{background:#ff9800;}
+
+.buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+button{
+  flex:1;
+  border:none;
+  padding:8px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600;
+  color:white;
+}
+
+.cookBtn{background:#2196f3;}
+.doneBtn{background:#4caf50;}
+.payBtn{background:#ff9800;}
+.deleteBtn{background:#f44336;}
+</style>
+</head>
+
+<body>
+
+<div class="header">🍽️ Kitchen Dashboard</div>
+<div style="padding:10px;text-align:center;">
+  <button onclick="openReports()" 
+    style="background:#fc8019;color:white;padding:10px 15px;border:none;border-radius:8px;">
+    📊 View Reports
+  </button>
+</div>
+<div class="section">💰 Pending Payments</div>
+<div class="container" id="payments"></div>
+
+<div class="section">🔥 Live Orders</div>
+<div class="container" id="orders"></div>
+
+<audio id="sound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let previousCount = 0;
+
+// 🔥 LIVE ORDERS + SAVE DAILY
+db.ref("orders").on("value", snapshot => {
+
+  let data = snapshot.val();
+
+  if(!data){
+    document.getElementById("orders").innerHTML = "No orders";
+    document.getElementById("payments").innerHTML = "";
+    return;
+  }
+
+  let orders = Object.entries(data).reverse();
+
+  if(orders.length > previousCount){
+
+  // 🔔 Sound
+  document.getElementById("sound").play();
+
+  // 📳 Vibration (mobile)
+  if(navigator.vibrate){
+    navigator.vibrate([200,100,200]);
+  }
+
+  // 🆕 Alert popup
+  alert("🆕 New Order Received!");
+  }
+  previousCount = orders.length;
+
+  let orderHTML = "";
+  let paymentHTML = "";
+
+  // 📊 DAILY TOTALS
+  let totalOrders = 0;
+  let totalRevenue = 0;
+  let pendingAmount = 0;
+
+  orders.forEach(([id, order]) => {
+
+    if(!order) return;
+
+    let status = order.status || "pending";
+    let payment = order.payment || "unpaid";
+
+    totalOrders++;
+
+    if(payment === "paid"){
+      totalRevenue += order.total || 0;
+    } else {
+      pendingAmount += order.total || 0;
+    }
+
+    // ITEMS
+    let itemsHTML = "";
+    if(order.items){
+      for(let key in order.items){
+        let item = order.items[key];
+        if(item && item.qty > 0){
+          itemsHTML += `<div class="item">${item.name} x ${item.qty}</div>`;
+        }
+      }
+    }
+
+    if(status !== "done"){
+      orderHTML += `
+      <div class="card">
+        <div class="table">Table ${order.table}</div>
+        <div class="time">${order.time || ""}</div>
+        ${itemsHTML}
+        <div class="total">₹${order.total}</div>
+        <div class="status ${status}">${status}</div>
+        <div class="buttons">
+          <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
+          <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
+          <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
+        </div>
+      </div>`;
+    }
+
+    if(status === "done" && payment !== "paid"){
+      paymentHTML += `
+      <div class="card">
+        <div class="table">Table ${order.table}</div>
+        ${itemsHTML}
+        <div class="total">₹${order.total}</div>
+        <div class="status unpaid">Unpaid</div>
+        <div class="buttons">
+          <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
+        </div>
+      </div>`;
+    }
+
+  });
+
+  document.getElementById("orders").innerHTML = orderHTML || "No active orders";
+  document.getElementById("payments").innerHTML = paymentHTML || "No pending payments";
+
+  // 💾 SAVE DAILY REPORT
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  db.ref("dailyReports/" + todayKey).set({
+    totalOrders,
+    revenue: totalRevenue,
+    pending: pendingAmount,
+    lastUpdated: new Date().toLocaleString()
+  });
+
+});
+
+// 📊 LOAD REPORTS
+db.ref("dailyReports").on("value", snapshot => {
+
+  let data = snapshot.val();
+
+  if(!data){
+    document.getElementById("todayReport").innerHTML = "No data";
+    document.getElementById("history").innerHTML = "";
+    return;
+  }
+
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  let todayHTML = "";
+  let historyHTML = "";
+
+  let entries = Object.entries(data).reverse();
+
+  entries.forEach(([date, report]) => {
+
+    let card = `
+      <div class="card">
+        <div class="table">${date}</div>
+        <div class="item">🧾 Orders: ${report.totalOrders}</div>
+        <div class="item">💰 Revenue: ₹${report.revenue}</div>
+        <div class="item">⏳ Pending: ₹${report.pending}</div>
+        <div class="time">${report.lastUpdated}</div>
+      </div>
+    `;
+
+    if(date === todayKey){
+      todayHTML = card;
+    } else {
+      historyHTML += card;
+    }
+
+  });
+
+  document.getElementById("todayReport").innerHTML =
+    todayHTML || "No today's data";
+
+  document.getElementById("history").innerHTML =
+    historyHTML || "No previous data";
+
+});
+
+// FUNCTIONS
+function updateStatus(id, status){
+  db.ref("orders/"+id).update({ status });
+}
+
+function markPaid(id){
+  db.ref("orders/"+id).update({ payment:"paid" });
+}
+
+function deleteOrder(id){
+  db.ref("orders/"+id).remove();
+}
+function openReports(){
+  window.location.href = "reports.html";
+}
+</script>
+
+</body>
+</html>

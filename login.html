@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+
+<h2>Kitchen Login</h2>
+
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+
+<button onclick="login()">Login</button>
+
+<script type="module">
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+const auth = getAuth();
+
+window.login = function(){
+  let email = document.getElementById("email").value;
+  let pass = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, pass)
+    .then(() => {
+      window.location.href = "kitchen.html";
+    })
+    .catch(() => {
+      alert("Login failed");
+    });
+}
+</script>
+
+</body>
+</html>

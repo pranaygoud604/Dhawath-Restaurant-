@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhawath</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+ font-family: 'Poppins', sans-serif;
+ background: #0f0f0f;
+ color: white;
+}
+
+/* HEADER */
+.header {
+ padding: 20px;
+ text-align: center;
+}
+
+.header h1 { font-size: 24px; }
+.subtitle { color:#fc8019; font-size:12px; }
+
+/* INPUT */
+input {
+ width: 90%;
+ padding: 14px;
+ border-radius: 12px;
+ border: none;
+ margin-top: 15px;
+ font-size: 16px;
+}
+
+/* GRID */
+.grid {
+ display: grid;
+ grid-template-columns: repeat(2,1fr);
+ gap: 15px;
+ padding: 15px;
+}
+
+/* CARD */
+.item {
+ background: #1c1c1c;
+ border-radius: 18px;
+ padding: 15px;
+ text-align: center;
+ box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* TITLE */
+.item h3 { margin-bottom:5px; }
+
+/* PRICE */
+.price {
+ color:#fc8019;
+ font-weight:bold;
+}
+
+/* ADD BUTTON */
+.add-btn {
+ background: white;
+ color: green;
+ border: 2px solid green;
+ padding: 6px 16px;
+ border-radius: 8px;
+ font-weight: bold;
+ margin-top:10px;
+}
+
+/* QTY */
+.qty-control {
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:10px;
+ background:white;
+ border-radius:8px;
+ padding:5px 10px;
+ margin-top:10px;
+}
+
+.qty-control button {
+ border:none;
+ background:none;
+ font-size:18px;
+ color:green;
+}
+
+.qty-control span {
+ color:black;
+ font-weight:bold;
+}
+
+/* CART BAR */
+.cart-bar {
+ position: fixed;
+ bottom: 10px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 90%;
+ background: #1c1c1c;
+ border-radius: 15px;
+ padding: 12px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ display:none;
+}
+
+.cart-bar button {
+ background:#fc8019;
+ border:none;
+ padding:10px;
+ border-radius:10px;
+ color:white;
+}
+
+/* TOAST */
+#toast {
+ position: fixed;
+ bottom: 80px;
+ left: 50%;
+ transform: translateX(-50%);
+ background:#333;
+ padding:10px 20px;
+ border-radius:20px;
+ display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>Dhawath Restaurant</h1>
+<div class="subtitle">SCAN • ORDER • PAY</div>
+<input type="number" id="table" placeholder="Enter Table Number">
+</div>
+
+<div class="grid">
+
+<div class="item">
+<h3>🍗 Chicken Biryani Single</h3>
+<div class="price">₹140</div>
+<div id="control-biryani">
+<button class="add-btn" onclick="addItem('biryani')">ADD</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🍗 Mutton Biryani</h3>
+<div class="price">₹220</div>
+<div id="control-mutton">
+ <div> </div>
+<button class="add-btn" onclick="addItem('mutton')">ADD</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🍜 Noodles</h3>
+<div class="price">₹120</div>
+<div id="control-noodles">
+<button class="add-btn" onclick="addItem('noodles')">ADD</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🍔 Burger</h3>
+<div class="price">₹100</div>
+<div id="control-burger">
+<button class="add-btn" onclick="addItem('burger')">ADD</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🍚 Fried Rice</h3>
+<div class="price">₹140</div>
+<div id="control-rice">
+<button class="add-btn" onclick="addItem('rice')">ADD</button>
+</div>
+</div>
+
+<div class="item">
+<h3>🥙 Shawarma</h3>
+<div class="price">₹130</div>
+<div id="control-shawarma">
+<button class="add-btn" onclick="addItem('shawarma')">ADD</button>
+</div>
+</div>
+
+</div>
+
+<!-- CART -->
+<div class="cart-bar" id="cartBar">
+<span id="cartCount"></span>
+<span>₹<span id="total">0</span></span>
+<button onclick="placeOrder()">Place Order</button>
+</div>
+
+<div id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
