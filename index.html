@@ -1,452 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Dhawath Restaurant</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #0d0d0d;
-  color: #fff;
-}
-
-.header {
-  padding: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #ff7a00;
-}
-
-.search {
-  padding: 10px 20px;
-}
-.search input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #1c1c1c;
-  color: white;
-}
-
-.section-title {
-  padding: 10px 20px;
-  color: #ff7a00;
-  font-weight: bold;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 0 20px 100px;
-}
-
-.card {
-  background: #1a1a1a;
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.card img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-}
-
-.content {
-  padding: 10px;
-}
-
-.title {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.price {
-  color: #ff7a00;
-  font-weight: bold;
-}
-
-.qty {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-}
-
-.qty button {
-  background: #ff7a00;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 8px;
-}
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #ff7a00;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  color: #000;
-  font-weight: bold;
-}
-
-.order {
-  background: black;
-  color: orange;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">🍽️ Dhawath Restaurant</div>
-
-<div class="search">
-  <input id="search" placeholder="Search food..." onkeyup="searchItems()">
-</div>
-
-<div id="menu"></div>
-
-<div class="footer">
-  <div id="total">₹0</div>
-  <button class="order" onclick="placeOrder()">Place Order</button>
-</div>
-
-<script>
-const items = [
-["Chicken Biryani Single",140],["Chicken Biryani Double",220],["Chicken Biryani Family",520],
-["Fry Piece Biryani Single",160],["Fry Piece Biryani Double",240],["Fry Piece Biryani Family",540],
-["Paneer Biryani Single",160],["Paneer Biryani Double",240],["Paneer Biryani Family",540],
-["Gongura Chicken Biryani Single",160],["Gongura Chicken Biryani Double",240],["Gongura Chicken Biryani Family",540],
-["Egg Biryani",80],
-["Chicken Rice",90],["Egg Rice",70],["Veg Rice",60],["Jeera Rice",80],
-["Egg Noodles",70],["Chicken Noodles",90],["Veg Noodles",60],
-["Chicken Manchuria",150],["Veg Manchuria",80],
-["Egg Burji",100],["Egg 65",110],["Egg Chilli",110],["Egg Manchurian",100],["Egg Keema",100],
-["Chicken Wings (6 pcs)",100],["Chicken Lollipop",150],
-["Chicken Pakodi Full",150],["Chicken Pakodi Single",100],
-["Chicken Roast Full",160],["Chicken Roast Single",100],
-["Chicken 65 Full",160],["Chicken 65 Single",100],
-["Chicken Chilli Full",160],["Chicken Chilli Single",100],
-["Chicken Telangana Curry",160],["Chicken Curry",150],
-["Paneer Masala",180],["Paneer Curry",160],
-["Chapathi",10],["Corn Fry",120],["Fish Fry",120],["Boti",150],["Head",180]
-];
-
-let cart = {};
-
-function renderMenu() {
-  let html = '<div class="grid">';
-  items.forEach(([name, price]) => {
-    html += `
-    <div class="card">
-      <img src="https://source.unsplash.com/300x200/?food">
-      <div class="content">
-        <div class="title">${name}</div>
-        <div class="price">₹${price}</div>
-        <div class="qty">
-          <button onclick="updateQty('${name}',${price},-1)">-</button>
-          <span id="${name}">0</span>
-          <button onclick="updateQty('${name}',${price},1)">+</button>
-        </div>
-      </div>
-    </div>`;
-  });
-  html += "</div>";
-  document.getElementById("menu").innerHTML = html;
-}
-
-function updateQty(name, price, change) {
-  if (!cart[name]) cart[name] = { qty: 0, price };
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dhawath Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #0d0d0d;
-  color: #fff;
+body{
+  font-family:'Poppins';
+  background:#0f0f0f;
+  color:white;
+  margin:0;
+  padding-bottom:90px;
 }
 
 /* HEADER */
-.header {
-  padding: 15px;
-  font-size: 20px;
-  color: orange;
-  font-weight: bold;
+.header{text-align:center;padding:15px}
+.header h2{color:#fc8019}
+
+/* INPUT */
+.input{
+  width:90%;
+  margin:10px auto;
+  display:block;
+  padding:12px;
+  border-radius:10px;
+  border:none;
 }
 
-/* SEARCH */
-.search {
-  padding: 10px;
-}
-.search input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #1c1c1c;
-  color: #fff;
+/* SECTION */
+.section{
+  padding:10px;
+  color:#fc8019;
+  font-weight:600;
 }
 
-/* CATEGORY TABS */
-.tabs {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 10px;
-}
-.tab {
-  padding: 8px 14px;
-  background: #1c1c1c;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-.tab.active {
-  background: orange;
-  color: black;
+/* MENU */
+.menu{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
 }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 10px;
+.card{
+  background:#1c1c1c;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
 }
 
-/* CARD */
-.card {
-  background: #1a1a1a;
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.card img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-}
-
-.content {
-  padding: 10px;
-}
-
-.title {
-  font-size: 13px;
-}
-
-.price {
-  color: orange;
-  font-weight: bold;
-}
+.icon{font-size:24px}
+.price{color:#fc8019}
 
 /* QTY */
-.qty {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
+.qty{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
 }
 
-.qty button {
-  background: orange;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 8px;
+.qty button{
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:8px;
+  background:#fc8019;
+  color:white;
 }
 
-/* FOOTER */
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: orange;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  color: black;
+/* CART BAR */
+.cartBar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fc8019;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
 }
 
-button {
-  border: none;
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+}
+.overlay.active{display:block}
+
+/* CART */
+.cart{
+  position:fixed;
+  bottom:-100%;
+  width:100%;
+  height:70%;
+  background:#1c1c1c;
+  border-radius:20px 20px 0 0;
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+}
+.cart.active{bottom:0}
+
+.cartItems{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.footer{
+  padding:10px;
+}
+
+.placeBtn{
+  width:100%;
+  padding:12px;
+  background:#fc8019;
+  border:none;
+  border-radius:10px;
+  color:white;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">🍽️ Dhawath Restaurant</div>
-
-<div class="search">
-  <input id="search" placeholder="Search food..." onkeyup="searchItems()">
+<div class="header">
+  <h2>🍽️ Dhawath Restaurant</h2>
 </div>
 
-<!-- CATEGORY TABS -->
-<div class="tabs" id="tabs"></div>
+<input id="table" class="input" placeholder="Enter Table Number">
 
-<!-- MENU -->
 <div id="menu"></div>
 
-<!-- FOOTER -->
-<div class="footer">
-  <div id="total">₹0</div>
-  <button onclick="placeOrder()">Place Order</button>
+<!-- CART -->
+<div class="cartBar" onclick="openCart()">
+  <span id="count">0 items</span>
+  <span id="total">₹0</span>
 </div>
 
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+<div class="cart" id="cart">
+  <div class="cartItems" id="cartItems"></div>
+  <div class="footer">
+    <div id="final">Total ₹0</div>
+    <button class="placeBtn" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
-const items = [
-{ name:"Chicken Biryani Single", price:140, cat:"Biryani", img:"biryani"},
-{ name:"Chicken Biryani Double", price:220, cat:"Biryani", img:"biryani"},
-{ name:"Chicken Biryani Family", price:520, cat:"Biryani", img:"biryani"},
-{ name:"Egg Biryani", price:80, cat:"Biryani", img:"egg rice"},
+const firebaseConfig={
+  apiKey:"YOUR_KEY",
+  databaseURL:"YOUR_DB"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
-{ name:"Chicken Rice", price:90, cat:"Rice", img:"fried rice"},
-{ name:"Egg Rice", price:70, cat:"Rice", img:"egg rice"},
-{ name:"Veg Rice", price:60, cat:"Rice", img:"veg rice"},
+/* ALL ITEMS */
+const sections = {
+"Biryani":[
+["Chicken Biryani Single",140],
+["Chicken Biryani Double",220],
+["Chicken Biryani Family",520],
+["Fry Piece Biryani Single",160],
+["Fry Piece Biryani Double",240],
+["Fry Piece Biryani Family",540],
+["Paneer Biryani Single",160],
+["Paneer Biryani Double",240],
+["Paneer Biryani Family",540],
+["Gongura Chicken Biryani Single",160],
+["Gongura Chicken Biryani Double",240],
+["Gongura Chicken Biryani Family",540],
+["Egg Biryani",80]
+],
 
-{ name:"Chicken Noodles", price:90, cat:"Noodles", img:"noodles"},
-{ name:"Egg Noodles", price:70, cat:"Noodles", img:"noodles"},
+"Rice":[
+["Chicken Rice",90],
+["Egg Rice",70],
+["Veg Rice",60],
+["Jeera Rice",80]
+],
 
-{ name:"Chicken 65", price:160, cat:"Starters", img:"chicken 65"},
-{ name:"Chicken Lollipop", price:150, cat:"Starters", img:"lollipop"},
+"Noodles":[
+["Egg Noodles",70],
+["Chicken Noodles",90],
+["Veg Noodles",60]
+],
 
-{ name:"Paneer Masala", price:180, cat:"Curries", img:"paneer"},
-{ name:"Paneer Curry", price:160, cat:"Curries", img:"paneer"},
+"Starters":[
+["Chicken Manchuria",150],
+["Veg Manchuria",80],
+["Egg Burji",100],
+["Egg Curry Small",65],
+["Egg Curry Full",110],
+["Egg Chilli",110],
+["Egg Manchurian",100],
+["Egg Keema",100],
+["Chicken Wings",100],
+["Chicken Lollipop",150],
+["Chicken Pakodi Full",150],
+["Chicken Pakodi Single",100],
+["Chicken Roast Full",160],
+["Chicken Roast Single",100],
+["Chicken 65 Full",160],
+["Chicken 65 Single",100],
+["Chicken Chilli Full",160],
+["Chicken Chilli Single",100]
+],
 
-{ name:"Chapathi", price:10, cat:"Breads", img:"chapati"}
-];
+"Curries":[
+["Chicken Telangana Curry",160],
+["Chicken Curry",150],
+["Paneer Masala",180],
+["Paneer Curry",160]
+],
 
-let cart = {};
-let currentCategory = "All";
+"Others":[
+["Chapathi",10],
+["Corn Fry",120],
+["Fish Fry",120],
+["Boti",150],
+["Head Curry",180]
+]
+};
 
-/* CATEGORY BUILD */
-function renderTabs() {
-  const cats = ["All", ...new Set(items.map(i => i.cat))];
-  document.getElementById("tabs").innerHTML = cats.map(c => 
-    `<div class="tab ${c===currentCategory?'active':''}" onclick="filterCategory('${c}')">${c}</div>`
-  ).join("");
+let items=[];
+Object.values(sections).forEach(sec=>sec.forEach(i=>items.push({name:i[0],price:i[1]})));
+
+let cart={};
+
+/* RENDER */
+function renderMenu(){
+  let html="";
+  Object.keys(sections).forEach(sec=>{
+    html+=`<div class="section">${sec}</div><div class="menu">`;
+
+    sections[sec].forEach((item)=>{
+      let index = items.findIndex(i=>i.name===item[0]);
+
+      html+=`
+      <div class="card">
+        <div>${item[0]}</div>
+        <div class="price">₹${item[1]}</div>
+        <div class="qty">
+          <button onclick="changeQty(${index},-1)">-</button>
+          <span>${cart[index]?.qty||0}</span>
+          <button onclick="changeQty(${index},1)">+</button>
+        </div>
+      </div>`;
+    });
+
+    html+="</div>";
+  });
+
+  document.getElementById("menu").innerHTML=html;
 }
 
-/* FILTER */
-function filterCategory(cat) {
-  currentCategory = cat;
-  renderTabs();
+/* QTY */
+function changeQty(i,val){
+  if(!cart[i]) cart[i]={...items[i],qty:0};
+  cart[i].qty+=val;
+  if(cart[i].qty<=0) delete cart[i];
+
+  updateCart();
   renderMenu();
 }
 
-/* MENU */
-function renderMenu() {
-  let html = '<div class="grid">';
-  items
-  .filter(i => currentCategory==="All" || i.cat===currentCategory)
-  .forEach(i => {
-    let id = i.name.replace(/\s/g,'');
-
-    html += `
-    <div class="card">
-      <img src="https://source.unsplash.com/400x300/?${i.img}">
-      <div class="content">
-        <div class="title">${i.name}</div>
-        <div class="price">₹${i.price}</div>
-
-        <div class="qty">
-          <button onclick="updateQty('${i.name}',${i.price},-1)">-</button>
-          <span id="${id}">0</span>
-          <button onclick="updateQty('${i.name}',${i.price},1)">+</button>
-        </div>
-      </div>
-    </div>`;
-  });
-
-  html += "</div>";
-  document.getElementById("menu").innerHTML = html;
-}
-
 /* CART */
-function updateQty(name, price, change) {
-  let id = name.replace(/\s/g,'');
-
-  if (!cart[name]) cart[name] = { qty:0, price };
-  cart[name].qty += change;
-
-  if (cart[name].qty <= 0) delete cart[name];
-
-  document.getElementById(id).innerText = cart[name]?.qty || 0;
-  renderTotal();
-}
-
-function renderTotal() {
-  let total = 0;
-  Object.values(cart).forEach(i => total += i.qty*i.price);
-  document.getElementById("total").innerText = "₹"+total;
-}
-
-/* SEARCH */
-function searchItems() {
-  let input = document.getElementById("search").value.toLowerCase();
-  document.querySelectorAll(".card").forEach(card=>{
-    card.style.display = card.innerText.toLowerCase().includes(input) ? "block":"none";
+function updateCart(){
+  let total=0,count=0,html="";
+  Object.values(cart).forEach(i=>{
+    total+=i.qty*i.price;
+    count+=i.qty;
+    html+=`${i.name} x ${i.qty}<br>`;
   });
+
+  document.getElementById("cartItems").innerHTML=html||"Cart empty";
+  document.getElementById("total").innerText="₹"+total;
+  document.getElementById("count").innerText=count+" items";
+  document.getElementById("final").innerText="Total ₹"+total;
+}
+
+/* CART OPEN */
+function openCart(){
+  document.getElementById("cart").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
+}
+
+function closeCart(){
+  document.getElementById("cart").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
+}
 
 /* ORDER */
-function placeOrder() {
-  alert("Order placed!");
-}
-// 🔥 PLACE ORDER WITH FIREBASE
-function placeOrder() {
-  let table = prompt("Enter Table Number");
-  if (!table) return alert("Enter table number");
-  if (Object.keys(cart).length === 0) return alert("Cart empty");
+function placeOrder(){
+  let table=document.getElementById("table").value;
+  if(!table) return alert("Enter table");
 
-  db.collection("orders").add({
-    table: table,
-    items: cart,
-    total: document.getElementById("total").innerText,
-    status: "new",
-    time: new Date()
-  })
-  .then(() => {
-    alert("✅ Order placed!");
-    cart = {};
-    renderTotal();
-    document.querySelectorAll("span").forEach(s => s.innerText = "0");
-  })
-  .catch(err => {
-    alert("Error!");
-    console.error(err);
+  let total=0;
+  Object.values(cart).forEach(i=>total+=i.qty*i.price);
+
+  db.ref("orders").push({
+    table,items:cart,total,
+    status:"pending",payment:"unpaid",
+    time:new Date().toLocaleString()
   });
+
+  alert("Order placed!");
+  cart={};
+  updateCart();
+  renderMenu();
+  closeCart();
 }
 
 renderMenu();
-</script>
-
-<!-- 🔥 FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 </script>
 
 </body>
