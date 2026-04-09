@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dhawath Admin</title>
+<title>Dhawath Restaurant Admin</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -35,9 +35,8 @@ body{
 .sidebar a{
   display:block;
   color:#aaa;
-  text-decoration:none;
   margin:10px 0;
-  font-size:14px;
+  text-decoration:none;
 }
 
 .sidebar a:hover{
@@ -57,6 +56,11 @@ body{
   padding:15px 20px;
   background:#1c1c1c;
   box-shadow:0 2px 10px rgba(0,0,0,0.6);
+}
+
+.brand{
+  color:#fc8019;
+  font-weight:600;
 }
 
 .logoutBtn{
@@ -81,6 +85,11 @@ body{
   padding:20px;
   border-radius:12px;
   text-align:center;
+  transition:0.2s;
+}
+
+.stat:hover{
+  transform:translateY(-3px);
 }
 
 .stat h3{
@@ -151,6 +160,31 @@ button{
 .doneBtn{background:#4caf50;}
 .payBtn{background:#ff9800;}
 .deleteBtn{background:#f44336;}
+
+/* 📱 MOBILE */
+@media(max-width:768px){
+
+  body{display:block;}
+
+  .sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .sidebar a{display:none;}
+
+  .main{
+    margin-left:0;
+  }
+
+  .stats{
+    flex-direction:column;
+  }
+}
 </style>
 </head>
 
@@ -167,7 +201,7 @@ button{
 <div class="main">
 
 <div class="topbar">
-  <div>Admin Dashboard</div>
+  <div class="brand">Dhawath Restaurant Admin</div>
   <button class="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
@@ -195,6 +229,7 @@ button{
 
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -202,8 +237,8 @@ button{
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+  authDomain: "dhawath-restaurant.firebaseapp.com",
+  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -211,14 +246,17 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
+// 🔐 LOGIN PROTECTION
 auth.onAuthStateChanged(user=>{
   if(!user) location.href="login.html";
 });
 
+// 🔓 LOGOUT
 function logout(){
   auth.signOut().then(()=>location.href="login.html");
 }
 
+// 🔥 LIVE ORDERS + REPORT SAVE
 db.ref("orders").on("value", snap=>{
   let data=snap.val();
   if(!data) return;
@@ -249,6 +287,7 @@ db.ref("orders").on("value", snap=>{
         <div class="buttons">
           <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
           <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
+          <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
         </div>
       </div>`;
     }
@@ -264,22 +303,36 @@ db.ref("orders").on("value", snap=>{
     }
   });
 
-  // ✅ SAVE DAILY REPORT
-let todayKey = new Date().toISOString().split("T")[0];
+  document.getElementById("orders").innerHTML=orderHTML;
+  document.getElementById("payments").innerHTML=paymentHTML;
 
-db.ref("dailyReports/" + todayKey).set({
-  totalOrders: total,
-  revenue: revenue,
-  pending: pending,
-  lastUpdated: new Date().toLocaleString()
+  document.getElementById("totalOrders").innerText=total;
+  document.getElementById("revenue").innerText="₹"+revenue;
+  document.getElementById("pending").innerText="₹"+pending;
+
+  // ✅ SAVE DAILY REPORT (FIXED)
+  let todayKey = new Date().toISOString().split("T")[0];
+
+  db.ref("dailyReports/" + todayKey).update({
+    totalOrders: total,
+    revenue: revenue,
+    pending: pending,
+    lastUpdated: new Date().toLocaleString()
+  });
+
 });
 
+// FUNCTIONS
 function updateStatus(id,s){
   db.ref("orders/"+id).update({status:s});
 }
 
 function markPaid(id){
   db.ref("orders/"+id).update({payment:"paid"});
+}
+
+function deleteOrder(id){
+  db.ref("orders/"+id).remove();
 }
 
 function openReports(){
