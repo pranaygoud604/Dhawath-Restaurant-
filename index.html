@@ -1,331 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Dhawath Restaurant</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
-body{
-  font-family:'Poppins';
-  background:#0f0f0f;
-  color:white;
-  margin:0;
-  padding-bottom:90px;
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #000;
+  color: #fff;
 }
 
-/* HEADER */
-.header{text-align:center;padding:15px}
-.header h2{color:#fc8019}
-
-/* INPUT */
-.input{
-  width:90%;
-  margin:10px auto;
-  display:block;
-  padding:12px;
-  border-radius:10px;
-  border:none;
+.header {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  padding: 15px;
+  color: orange;
 }
 
-/* SECTION */
-.section{
-  padding:10px;
-  color:#fc8019;
-  font-weight:600;
+.container {
+  padding: 15px;
 }
 
-/* MENU */
-.menu{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  padding:10px;
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
 }
 
-.card{
-  background:#1c1c1c;
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
+.section-title {
+  color: orange;
+  margin: 15px 0 10px;
 }
 
-.icon{font-size:24px}
-.price{color:#fc8019}
-
-/* QTY */
-.qty{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:8px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-.qty button{
-  width:32px;
-  height:32px;
-  border:none;
-  border-radius:8px;
-  background:#fc8019;
-  color:white;
+.menu-item {
+  background: #111;
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
 }
 
-/* CART BAR */
-.cartBar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#fc8019;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
+.price {
+  color: orange;
 }
 
-/* OVERLAY */
-.overlay{
-  position:fixed;
-  top:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-  display:none;
-}
-.overlay.active{display:block}
-
-/* CART */
-.cart{
-  position:fixed;
-  bottom:-100%;
-  width:100%;
-  height:70%;
-  background:#1c1c1c;
-  border-radius:20px 20px 0 0;
-  transition:0.3s;
-  display:flex;
-  flex-direction:column;
-}
-.cart.active{bottom:0}
-
-.cartItems{
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
+.qty {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-.footer{
-  padding:10px;
+.btn {
+  background: orange;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
 }
 
-.placeBtn{
-  width:100%;
-  padding:12px;
-  background:#fc8019;
-  border:none;
-  border-radius:10px;
-  color:white;
+.cart {
+  background: #111;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: orange;
+  color: #000;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.place-order {
+  background: #000;
+  color: orange;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h2>🍽️ Dhawath Restaurant</h2>
+<div class="header">🍽️ Dhawath Restaurant</div>
+
+<div class="container">
+
+<input type="text" id="table" placeholder="Enter Table Number">
+<input type="text" id="search" placeholder="Search items..." onkeyup="searchItems()">
+
+<!-- 🍗 CHICKEN BIRYANI -->
+<div class="section-title">Chicken Biryani</div>
+<div class="grid">
+  <div class="menu-item"><h4>Chicken Biryani Single</h4><div class="price">₹140</div><div class="qty"><button onclick="updateQty('Chicken Biryani Single',140,-1)">-</button><span id="Chicken Biryani Single">0</span><button onclick="updateQty('Chicken Biryani Single',140,1)">+</button></div></div>
+  <div class="menu-item"><h4>Chicken Biryani Double</h4><div class="price">₹220</div><div class="qty"><button onclick="updateQty('Chicken Biryani Double',220,-1)">-</button><span id="Chicken Biryani Double">0</span><button onclick="updateQty('Chicken Biryani Double',220,1)">+</button></div></div>
+  <div class="menu-item"><h4>Chicken Biryani Family</h4><div class="price">₹520</div><div class="qty"><button onclick="updateQty('Chicken Biryani Family',520,-1)">-</button><span id="Chicken Biryani Family">0</span><button onclick="updateQty('Chicken Biryani Family',520,1)">+</button></div></div>
 </div>
 
-<input id="table" class="input" placeholder="Enter Table Number">
-
-<div id="menu"></div>
-
-<!-- CART -->
-<div class="cartBar" onclick="openCart()">
-  <span id="count">0 items</span>
-  <span id="total">₹0</span>
+<!-- 🐐 MUTTON -->
+<div class="section-title">Mutton Biryani</div>
+<div class="grid">
+  <div class="menu-item"><h4>Mutton Biryani Single</h4><div class="price">₹220</div><div class="qty"><button onclick="updateQty('Mutton Biryani Single',220,-1)">-</button><span id="Mutton Biryani Single">0</span><button onclick="updateQty('Mutton Biryani Single',220,1)">+</button></div></div>
+  <div class="menu-item"><h4>Mutton Biryani Double</h4><div class="price">₹320</div><div class="qty"><button onclick="updateQty('Mutton Biryani Double',320,-1)">-</button><span id="Mutton Biryani Double">0</span><button onclick="updateQty('Mutton Biryani Double',320,1)">+</button></div></div>
 </div>
 
-<div class="overlay" id="overlay" onclick="closeCart()"></div>
-
-<div class="cart" id="cart">
-  <div class="cartItems" id="cartItems"></div>
-  <div class="footer">
-    <div id="final">Total ₹0</div>
-    <button class="placeBtn" onclick="placeOrder()">Place Order</button>
-  </div>
+<!-- 🍗 STARTERS -->
+<div class="section-title">Starters</div>
+<div class="grid">
+  <div class="menu-item"><h4>Chicken 65</h4><div class="price">₹180</div><div class="qty"><button onclick="updateQty('Chicken 65',180,-1)">-</button><span id="Chicken 65">0</span><button onclick="updateQty('Chicken 65',180,1)">+</button></div></div>
+  <div class="menu-item"><h4>Chicken Lollipop</h4><div class="price">₹200</div><div class="qty"><button onclick="updateQty('Chicken Lollipop',200,-1)">-</button><span id="Chicken Lollipop">0</span><button onclick="updateQty('Chicken Lollipop',200,1)">+</button></div></div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!-- 🥤 DRINKS -->
+<div class="section-title">Drinks</div>
+<div class="grid">
+  <div class="menu-item"><h4>Water Bottle</h4><div class="price">₹20</div><div class="qty"><button onclick="updateQty('Water Bottle',20,-1)">-</button><span id="Water Bottle">0</span><button onclick="updateQty('Water Bottle',20,1)">+</button></div></div>
+  <div class="menu-item"><h4>Cool Drink</h4><div class="price">₹40</div><div class="qty"><button onclick="updateQty('Cool Drink',40,-1)">-</button><span id="Cool Drink">0</span><button onclick="updateQty('Cool Drink',40,1)">+</button></div></div>
+</div>
+
+<!-- 🛒 CART -->
+<div class="cart">
+  <h3>Cart</h3>
+  <div id="cartItems"></div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div id="total">₹0</div>
+  <button class="place-order" onclick="placeOrder()">Order</button>
+</div>
 
 <script>
-const firebaseConfig={
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
+let cart = {};
 
-/* ALL ITEMS */
-const sections = {
-"Biryani":[
-["Chicken Biryani Single",140],
-["Chicken Biryani Double",220],
-["Chicken Biryani Family",520],
-["Fry Piece Biryani Single",160],
-["Fry Piece Biryani Double",240],
-["Fry Piece Biryani Family",540],
-["Paneer Biryani Single",160],
-["Paneer Biryani Double",240],
-["Paneer Biryani Family",540],
-["Gongura Chicken Biryani Single",160],
-["Gongura Chicken Biryani Double",240],
-["Gongura Chicken Biryani Family",540],
-["Egg Biryani",80]
-],
+function updateQty(name, price, change) {
+  if (!cart[name]) cart[name] = { qty: 0, price };
 
-"Rice":[
-["Chicken Rice",90],
-["Egg Rice",70],
-["Veg Rice",60],
-["Jeera Rice",80]
-],
+  cart[name].qty += change;
+  if (cart[name].qty <= 0) delete cart[name];
 
-"Noodles":[
-["Egg Noodles",70],
-["Chicken Noodles",90],
-["Veg Noodles",60]
-],
+  document.getElementById(name).innerText = cart[name]?.qty || 0;
+  renderCart();
+}
 
-"Starters":[
-["Chicken Manchuria",150],
-["Veg Manchuria",80],
-["Egg Burji",100],
-["Egg Curry Small",65],
-["Egg Curry Full",110],
-["Egg Chilli",110],
-["Egg Manchurian",100],
-["Egg Keema",100],
-["Chicken Wings",100],
-["Chicken Lollipop",150],
-["Chicken Pakodi Full",150],
-["Chicken Pakodi Single",100],
-["Chicken Roast Full",160],
-["Chicken Roast Single",100],
-["Chicken 65 Full",160],
-["Chicken 65 Single",100],
-["Chicken Chilli Full",160],
-["Chicken Chilli Single",100]
-],
+function renderCart() {
+  let total = 0;
+  const container = document.getElementById("cartItems");
+  container.innerHTML = "";
 
-"Curries":[
-["Chicken Telangana Curry",160],
-["Chicken Curry",150],
-["Paneer Masala",180],
-["Paneer Curry",160]
-],
+  Object.keys(cart).forEach(name => {
+    const item = cart[name];
+    const subtotal = item.qty * item.price;
+    total += subtotal;
 
-"Others":[
-["Chapathi",10],
-["Corn Fry",120],
-["Fish Fry",120],
-["Boti",150],
-["Head Curry",180]
-]
-};
-
-let items=[];
-Object.values(sections).forEach(sec=>sec.forEach(i=>items.push({name:i[0],price:i[1]})));
-
-let cart={};
-
-/* RENDER */
-function renderMenu(){
-  let html="";
-  Object.keys(sections).forEach(sec=>{
-    html+=`<div class="section">${sec}</div><div class="menu">`;
-
-    sections[sec].forEach((item)=>{
-      let index = items.findIndex(i=>i.name===item[0]);
-
-      html+=`
-      <div class="card">
-        <div>${item[0]}</div>
-        <div class="price">₹${item[1]}</div>
-        <div class="qty">
-          <button onclick="changeQty(${index},-1)">-</button>
-          <span>${cart[index]?.qty||0}</span>
-          <button onclick="changeQty(${index},1)">+</button>
-        </div>
-      </div>`;
-    });
-
-    html+="</div>";
+    container.innerHTML += `
+      <div class="cart-item">
+        <div>${name} x ${item.qty}<br><small>₹${item.price} each</small></div>
+        <div>₹${subtotal}</div>
+      </div>
+    `;
   });
 
-  document.getElementById("menu").innerHTML=html;
+  document.getElementById("total").innerText = "₹" + total;
 }
 
-/* QTY */
-function changeQty(i,val){
-  if(!cart[i]) cart[i]={...items[i],qty:0};
-  cart[i].qty+=val;
-  if(cart[i].qty<=0) delete cart[i];
-
-  updateCart();
-  renderMenu();
-}
-
-/* CART */
-function updateCart(){
-  let total=0,count=0,html="";
-  Object.values(cart).forEach(i=>{
-    total+=i.qty*i.price;
-    count+=i.qty;
-    html+=`${i.name} x ${i.qty}<br>`;
+function searchItems() {
+  const input = document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".menu-item").forEach(item => {
+    item.style.display = item.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
-
-  document.getElementById("cartItems").innerHTML=html||"Cart empty";
-  document.getElementById("total").innerText="₹"+total;
-  document.getElementById("count").innerText=count+" items";
-  document.getElementById("final").innerText="Total ₹"+total;
 }
 
-/* CART OPEN */
-function openCart(){
-  document.getElementById("cart").classList.add("active");
-  document.getElementById("overlay").classList.add("active");
+function placeOrder() {
+  const table = document.getElementById("table").value;
+  if (!table) return alert("Enter table number");
+  if (Object.keys(cart).length === 0) return alert("Cart empty");
+
+  alert("Order placed for Table " + table);
 }
-
-function closeCart(){
-  document.getElementById("cart").classList.remove("active");
-  document.getElementById("overlay").classList.remove("active");
-}
-
-/* ORDER */
-function placeOrder(){
-  let table=document.getElementById("table").value;
-  if(!table) return alert("Enter table");
-
-  let total=0;
-  Object.values(cart).forEach(i=>total+=i.qty*i.price);
-
-  db.ref("orders").push({
-    table,items:cart,total,
-    status:"pending",payment:"unpaid",
-    time:new Date().toLocaleString()
-  });
-
-  alert("Order placed!");
-  cart={};
-  updateCart();
-  renderMenu();
-  closeCart();
-}
-
-renderMenu();
 </script>
 
 </body>
