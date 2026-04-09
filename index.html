@@ -339,7 +339,18 @@ function placeOrder(){
   searchItems();
   closeCart();
 }
+function getImage(name){
+  name = name.toLowerCase();
 
+  if(name.includes("biryani")) return "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
+  if(name.includes("rice")) return "https://cdn-icons-png.flaticon.com/512/2718/2718224.png";
+  if(name.includes("noodles")) return "https://cdn-icons-png.flaticon.com/512/3480/3480618.png";
+  if(name.includes("egg")) return "https://cdn-icons-png.flaticon.com/512/837/837560.png";
+  if(name.includes("paneer")) return "https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
+  if(name.includes("chicken")) return "https://cdn-icons-png.flaticon.com/512/1046/1046751.png";
+
+  return "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
+}
 renderMenu();
 </script>
 
