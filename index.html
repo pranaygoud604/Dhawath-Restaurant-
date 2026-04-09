@@ -27,7 +27,7 @@ body{
   color:#fc8019;
 }
 
-/* TABLE INPUT */
+/* TABLE */
 .tableInput{
   width:90%;
   margin:10px auto;
@@ -35,10 +35,9 @@ body{
   padding:12px;
   border-radius:10px;
   border:none;
-  font-size:16px;
 }
 
-/* MENU GRID */
+/* MENU */
 .menu{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
@@ -51,39 +50,64 @@ body{
   padding:15px;
   border-radius:12px;
   text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.5);
 }
 
-.card h3{
-  font-size:14px;
+.icon{
+  font-size:28px;
 }
 
 .price{
   color:#fc8019;
-  margin:8px 0;
+  margin:5px 0;
 }
 
-button{
-  background:#4caf50;
+/* QTY BUTTONS */
+.qty{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.qty button{
+  width:30px;
+  height:30px;
   border:none;
-  padding:8px 12px;
   border-radius:6px;
+  background:#fc8019;
   color:white;
-  cursor:pointer;
+  font-weight:bold;
 }
 
 /* CART */
-.cart{
+.cartBox{
   position:fixed;
   bottom:0;
   width:100%;
   background:#1c1c1c;
   padding:15px;
+  border-top:1px solid #333;
 }
 
-.cart button{
+.cartItem{
+  font-size:12px;
+}
+
+.total{
+  margin-top:8px;
+  font-weight:bold;
+}
+
+.placeBtn{
   width:100%;
+  margin-top:10px;
   background:#fc8019;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  color:white;
+  font-size:14px;
 }
 </style>
 </head>
@@ -98,74 +122,36 @@ button{
 
 <div class="menu" id="menu"></div>
 
-<div class="cart">
-  <button onclick="placeOrder()">Place Order</button>
+<div class="cartBox">
+  <div id="cartItems"></div>
+  <div class="total" id="total">Total: ₹0</div>
+  <button class="placeBtn" onclick="placeOrder()">Place Order</button>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+  apiKey: "YOUR_KEY",
+  databaseURL: "YOUR_DB"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* MENU DATA */
+/* MENU WITH ICONS */
 const items = [
-  {name:"Chicken Biryani",price:140},
-  {name:"Mutton Biryani",price:220},
-  {name:"Family Biryani",price:520},
-
-  {name:"Fry Piece Biryani",price:160},
-  {name:"Paneer Biryani",price:160},
-  {name:"Gongura Chicken Biryani",price:160},
-
-  {name:"Egg Biryani",price:80},
-  {name:"Chicken Rice",price:90},
-  {name:"Egg Rice",price:70},
-  {name:"Veg Rice",price:60},
-
-  {name:"Jeera Rice",price:80},
-  {name:"Egg Noodles",price:70},
-  {name:"Chicken Noodles",price:90},
-  {name:"Veg Noodles",price:60},
-
-  {name:"Chicken Manchuria",price:150},
-  {name:"Veg Manchuria",price:80},
-
-  {name:"Egg Burji",price:100},
-  {name:"Egg Curry",price:65},
-  {name:"Egg Chilli",price:110},
-
-  {name:"Egg Manchurian",price:100},
-  {name:"Egg Keema",price:100},
-
-  {name:"Chicken Wings (6 pcs)",price:100},
-  {name:"Chicken Lollipop",price:150},
-
-  {name:"Chicken Pakodi",price:150},
-  {name:"Chicken Roast",price:160},
-  {name:"Chicken 65",price:160},
-  {name:"Chicken Chilli",price:160},
-
-  {name:"Chicken Telangana Curry",price:160},
-  {name:"Chicken Curry",price:150},
-
-  {name:"Paneer Masala",price:180},
-  {name:"Paneer Curry",price:160},
-
-  {name:"Chapathi",price:10},
-  {name:"Corn Fry",price:120},
-  {name:"Fish Fry",price:120},
-
-  {name:"Boti",price:150},
-  {name:"Head Curry",price:180}
+  {name:"Chicken Biryani",price:140,icon:"🍗"},
+  {name:"Mutton Biryani",price:220,icon:"🥩"},
+  {name:"Egg Biryani",price:80,icon:"🥚"},
+  {name:"Veg Rice",price:60,icon:"🥗"},
+  {name:"Chicken Noodles",price:90,icon:"🍜"},
+  {name:"Chicken Manchuria",price:150,icon:"🍲"},
+  {name:"Egg Curry",price:65,icon:"🍛"},
+  {name:"Chicken Wings",price:100,icon:"🍗"},
+  {name:"Paneer Masala",price:180,icon:"🧀"},
+  {name:"Fish Fry",price:120,icon:"🐟"}
 ];
 
 let cart = {};
@@ -176,26 +162,51 @@ const menuDiv = document.getElementById("menu");
 items.forEach((item,i)=>{
   menuDiv.innerHTML += `
   <div class="card">
-    <h3>${item.name}</h3>
+    <div class="icon">${item.icon}</div>
+    <h4>${item.name}</h4>
     <div class="price">₹${item.price}</div>
-    <button onclick="addItem(${i})">ADD</button>
+    
+    <div class="qty">
+      <button onclick="changeQty(${i},-1)">-</button>
+      <span id="qty-${i}">0</span>
+      <button onclick="changeQty(${i},1)">+</button>
+    </div>
   </div>`;
 });
 
-function addItem(i){
+function changeQty(i,change){
   if(!cart[i]) cart[i]={...items[i],qty:0};
-  cart[i].qty++;
+  cart[i].qty += change;
+
+  if(cart[i].qty <=0) delete cart[i];
+
+  document.getElementById("qty-"+i).innerText = cart[i]?.qty || 0;
+  updateCart();
+}
+
+/* UPDATE CART */
+function updateCart(){
+  let cartHTML="";
+  let total=0;
+
+  Object.values(cart).forEach(item=>{
+    cartHTML += `<div class="cartItem">${item.name} x ${item.qty}</div>`;
+    total += item.price * item.qty;
+  });
+
+  document.getElementById("cartItems").innerHTML = cartHTML || "Cart empty";
+  document.getElementById("total").innerText = "Total: ₹"+total;
 }
 
 /* PLACE ORDER */
 function placeOrder(){
+  let table=document.getElementById("table").value;
 
-  let table = document.getElementById("table").value;
   if(!table) return alert("Enter table number");
 
-  let total = 0;
+  let total=0;
   Object.values(cart).forEach(i=>{
-    total += i.price * i.qty;
+    total+=i.price*i.qty;
   });
 
   db.ref("orders").push({
@@ -209,6 +220,7 @@ function placeOrder(){
 
   alert("Order placed!");
   cart={};
+  location.reload();
 }
 </script>
 
