@@ -167,25 +167,246 @@ function renderMenu() {
 
 function updateQty(name, price, change) {
   if (!cart[name]) cart[name] = { qty: 0, price };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhawath Restaurant</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0d0d0d;
+  color: #fff;
+}
+
+/* HEADER */
+.header {
+  padding: 15px;
+  font-size: 20px;
+  color: orange;
+  font-weight: bold;
+}
+
+/* SEARCH */
+.search {
+  padding: 10px;
+}
+.search input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #1c1c1c;
+  color: #fff;
+}
+
+/* CATEGORY TABS */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
+}
+.tab {
+  padding: 8px 14px;
+  background: #1c1c1c;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.tab.active {
+  background: orange;
+  color: black;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 10px;
+}
+
+/* CARD */
+.card {
+  background: #1a1a1a;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 10px;
+}
+
+.title {
+  font-size: 13px;
+}
+
+.price {
+  color: orange;
+  font-weight: bold;
+}
+
+/* QTY */
+.qty {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.qty button {
+  background: orange;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+/* FOOTER */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: orange;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  color: black;
+}
+
+button {
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🍽️ Dhawath Restaurant</div>
+
+<div class="search">
+  <input id="search" placeholder="Search food..." onkeyup="searchItems()">
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="tabs" id="tabs"></div>
+
+<!-- MENU -->
+<div id="menu"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div id="total">₹0</div>
+  <button onclick="placeOrder()">Place Order</button>
+</div>
+
+<script>
+const items = [
+{ name:"Chicken Biryani Single", price:140, cat:"Biryani", img:"biryani"},
+{ name:"Chicken Biryani Double", price:220, cat:"Biryani", img:"biryani"},
+{ name:"Chicken Biryani Family", price:520, cat:"Biryani", img:"biryani"},
+{ name:"Egg Biryani", price:80, cat:"Biryani", img:"egg rice"},
+
+{ name:"Chicken Rice", price:90, cat:"Rice", img:"fried rice"},
+{ name:"Egg Rice", price:70, cat:"Rice", img:"egg rice"},
+{ name:"Veg Rice", price:60, cat:"Rice", img:"veg rice"},
+
+{ name:"Chicken Noodles", price:90, cat:"Noodles", img:"noodles"},
+{ name:"Egg Noodles", price:70, cat:"Noodles", img:"noodles"},
+
+{ name:"Chicken 65", price:160, cat:"Starters", img:"chicken 65"},
+{ name:"Chicken Lollipop", price:150, cat:"Starters", img:"lollipop"},
+
+{ name:"Paneer Masala", price:180, cat:"Curries", img:"paneer"},
+{ name:"Paneer Curry", price:160, cat:"Curries", img:"paneer"},
+
+{ name:"Chapathi", price:10, cat:"Breads", img:"chapati"}
+];
+
+let cart = {};
+let currentCategory = "All";
+
+/* CATEGORY BUILD */
+function renderTabs() {
+  const cats = ["All", ...new Set(items.map(i => i.cat))];
+  document.getElementById("tabs").innerHTML = cats.map(c => 
+    `<div class="tab ${c===currentCategory?'active':''}" onclick="filterCategory('${c}')">${c}</div>`
+  ).join("");
+}
+
+/* FILTER */
+function filterCategory(cat) {
+  currentCategory = cat;
+  renderTabs();
+  renderMenu();
+}
+
+/* MENU */
+function renderMenu() {
+  let html = '<div class="grid">';
+  items
+  .filter(i => currentCategory==="All" || i.cat===currentCategory)
+  .forEach(i => {
+    let id = i.name.replace(/\s/g,'');
+
+    html += `
+    <div class="card">
+      <img src="https://source.unsplash.com/400x300/?${i.img}">
+      <div class="content">
+        <div class="title">${i.name}</div>
+        <div class="price">₹${i.price}</div>
+
+        <div class="qty">
+          <button onclick="updateQty('${i.name}',${i.price},-1)">-</button>
+          <span id="${id}">0</span>
+          <button onclick="updateQty('${i.name}',${i.price},1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += "</div>";
+  document.getElementById("menu").innerHTML = html;
+}
+
+/* CART */
+function updateQty(name, price, change) {
+  let id = name.replace(/\s/g,'');
+
+  if (!cart[name]) cart[name] = { qty:0, price };
   cart[name].qty += change;
+
   if (cart[name].qty <= 0) delete cart[name];
-  document.getElementById(name).innerText = cart[name]?.qty || 0;
+
+  document.getElementById(id).innerText = cart[name]?.qty || 0;
   renderTotal();
 }
 
 function renderTotal() {
   let total = 0;
-  Object.values(cart).forEach(i => total += i.qty * i.price);
-  document.getElementById("total").innerText = "₹" + total;
+  Object.values(cart).forEach(i => total += i.qty*i.price);
+  document.getElementById("total").innerText = "₹"+total;
 }
 
+/* SEARCH */
 function searchItems() {
   let input = document.getElementById("search").value.toLowerCase();
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
+  document.querySelectorAll(".card").forEach(card=>{
+    card.style.display = card.innerText.toLowerCase().includes(input) ? "block":"none";
   });
 }
 
+/* ORDER */
+function placeOrder() {
+  alert("Order placed!");
+}
 // 🔥 PLACE ORDER WITH FIREBASE
 function placeOrder() {
   let table = prompt("Enter Table Number");
