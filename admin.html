@@ -264,12 +264,14 @@ db.ref("orders").on("value", snap=>{
     }
   });
 
-  document.getElementById("orders").innerHTML=orderHTML;
-  document.getElementById("payments").innerHTML=paymentHTML;
+  // ✅ SAVE DAILY REPORT
+let todayKey = new Date().toISOString().split("T")[0];
 
-  document.getElementById("totalOrders").innerText=total;
-  document.getElementById("revenue").innerText="₹"+revenue;
-  document.getElementById("pending").innerText="₹"+pending;
+db.ref("dailyReports/" + todayKey).set({
+  totalOrders: total,
+  revenue: revenue,
+  pending: pending,
+  lastUpdated: new Date().toLocaleString()
 });
 
 function updateStatus(id,s){
