@@ -9,105 +9,67 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-  font-family:'Poppins',sans-serif;
-  background:#0f0f0f;
-  color:white;
-}
+body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0}
 
 /* HEADER */
-.header{
-  text-align:center;
-  padding:20px;
-}
+.header{text-align:center;padding:15px}
+.header h1{color:#fc8019}
 
-.header h1{
-  color:#fc8019;
-}
-
-/* TABLE */
-.tableInput{
+/* SEARCH */
+.search{
   width:90%;
   margin:10px auto;
   display:block;
-  padding:12px;
-  border-radius:10px;
+  padding:10px;
+  border-radius:8px;
   border:none;
+}
+
+/* CATEGORY */
+.category{
+  padding:10px;
+  color:#fc8019;
 }
 
 /* MENU */
 .menu{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:15px;
-  padding:15px;
+  gap:10px;
+  padding:10px;
 }
 
 .card{
   background:#1c1c1c;
-  padding:15px;
-  border-radius:12px;
+  padding:10px;
+  border-radius:10px;
   text-align:center;
 }
 
-.icon{
-  font-size:28px;
-}
+.icon{font-size:26px}
 
-.price{
-  color:#fc8019;
-  margin:5px 0;
-}
+.price{color:#fc8019}
 
-/* QTY BUTTONS */
-.qty{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  margin-top:10px;
-}
-
-.qty button{
-  width:30px;
-  height:30px;
-  border:none;
-  border-radius:6px;
-  background:#fc8019;
-  color:white;
-  font-weight:bold;
-}
+/* QTY */
+.qty{display:flex;justify-content:center;gap:10px;margin-top:5px}
+.qty button{background:#fc8019;border:none;color:white;border-radius:5px;width:25px}
 
 /* CART */
-.cartBox{
+.cart{
   position:fixed;
   bottom:0;
   width:100%;
   background:#1c1c1c;
-  padding:15px;
-  border-top:1px solid #333;
+  padding:10px;
 }
 
-.cartItem{
-  font-size:12px;
-}
-
-.total{
-  margin-top:8px;
-  font-weight:bold;
-}
-
-.placeBtn{
+.place{
   width:100%;
-  margin-top:10px;
   background:#fc8019;
   padding:10px;
   border:none;
   border-radius:8px;
   color:white;
-  font-size:14px;
 }
 </style>
 </head>
@@ -118,111 +80,176 @@ body{
   <h1>🍽️ Dhawath Restaurant</h1>
 </div>
 
-<input id="table" class="tableInput" placeholder="Enter Table Number">
+<input id="search" class="search" placeholder="Search food..." onkeyup="renderMenu()">
 
-<div class="menu" id="menu"></div>
+<input id="table" class="search" placeholder="Enter Table Number">
 
-<div class="cartBox">
+<div id="menu"></div>
+
+<div class="cart">
   <div id="cartItems"></div>
-  <div class="total" id="total">Total: ₹0</div>
-  <button class="placeBtn" onclick="placeOrder()">Place Order</button>
+  <div id="total">Total ₹0</div>
+  <button class="place" onclick="placeOrder()">Place Order</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+const firebaseConfig={
+  apiKey:"YOUR_KEY",
+  databaseURL:"YOUR_DB"
 };
-
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
-/* MENU WITH ICONS */
-const items = [
-  {name:"Chicken Biryani",price:140,icon:"🍗"},
-  {name:"Mutton Biryani",price:220,icon:"🥩"},
-  {name:"Egg Biryani",price:80,icon:"🥚"},
-  {name:"Veg Rice",price:60,icon:"🥗"},
-  {name:"Chicken Noodles",price:90,icon:"🍜"},
-  {name:"Chicken Manchuria",price:150,icon:"🍲"},
-  {name:"Egg Curry",price:65,icon:"🍛"},
-  {name:"Chicken Wings",price:100,icon:"🍗"},
-  {name:"Paneer Masala",price:180,icon:"🧀"},
-  {name:"Fish Fry",price:120,icon:"🐟"}
+/* FULL MENU */
+const items=[
+/* BIRYANI */
+{name:"Chicken Biryani Single",price:140,cat:"Biryani",icon:"🍗"},
+{name:"Chicken Biryani Double",price:220,cat:"Biryani",icon:"🍗"},
+{name:"Chicken Biryani Family",price:520,cat:"Biryani",icon:"🍗"},
+
+{name:"Fry Piece Biryani Single",price:160,cat:"Biryani",icon:"🍗"},
+{name:"Fry Piece Biryani Double",price:240,cat:"Biryani",icon:"🍗"},
+{name:"Fry Piece Biryani Family",price:540,cat:"Biryani",icon:"🍗"},
+
+{name:"Paneer Biryani Single",price:160,cat:"Biryani",icon:"🧀"},
+{name:"Paneer Biryani Double",price:240,cat:"Biryani",icon:"🧀"},
+{name:"Paneer Biryani Family",price:540,cat:"Biryani",icon:"🧀"},
+
+{name:"Gongura Chicken Biryani Single",price:160,cat:"Biryani",icon:"🍗"},
+{name:"Gongura Chicken Biryani Double",price:240,cat:"Biryani",icon:"🍗"},
+{name:"Gongura Chicken Biryani Family",price:540,cat:"Biryani",icon:"🍗"},
+
+{name:"Egg Biryani",price:80,cat:"Biryani",icon:"🥚"},
+
+/* RICE */
+{name:"Chicken Rice",price:90,cat:"Rice",icon:"🍛"},
+{name:"Egg Rice",price:70,cat:"Rice",icon:"🍛"},
+{name:"Veg Rice",price:60,cat:"Rice",icon:"🥗"},
+{name:"Jeera Rice",price:80,cat:"Rice",icon:"🍚"},
+
+/* NOODLES */
+{name:"Egg Noodles",price:70,cat:"Noodles",icon:"🍜"},
+{name:"Chicken Noodles",price:90,cat:"Noodles",icon:"🍜"},
+{name:"Veg Noodles",price:60,cat:"Noodles",icon:"🍜"},
+
+/* STARTERS */
+{name:"Chicken Manchuria",price:150,cat:"Starters",icon:"🍲"},
+{name:"Veg Manchuria",price:80,cat:"Starters",icon:"🥦"},
+{name:"Egg Burji",price:100,cat:"Starters",icon:"🥚"},
+{name:"Egg Curry Small",price:65,cat:"Starters",icon:"🍛"},
+{name:"Egg Curry Full",price:110,cat:"Starters",icon:"🍛"},
+{name:"Egg Chilli",price:110,cat:"Starters",icon:"🌶️"},
+{name:"Egg Manchurian",price:100,cat:"Starters",icon:"🍲"},
+{name:"Egg Keema",price:100,cat:"Starters",icon:"🥩"},
+
+{name:"Chicken Wings",price:100,cat:"Starters",icon:"🍗"},
+{name:"Chicken Lollipop",price:150,cat:"Starters",icon:"🍗"},
+
+{name:"Chicken Pakodi Full",price:150,cat:"Starters",icon:"🍗"},
+{name:"Chicken Pakodi Single",price:100,cat:"Starters",icon:"🍗"},
+
+{name:"Chicken Roast Full",price:160,cat:"Starters",icon:"🍗"},
+{name:"Chicken Roast Single",price:100,cat:"Starters",icon:"🍗"},
+
+{name:"Chicken 65 Full",price:160,cat:"Starters",icon:"🍗"},
+{name:"Chicken 65 Single",price:100,cat:"Starters",icon:"🍗"},
+
+{name:"Chicken Chilli Full",price:160,cat:"Starters",icon:"🌶️"},
+{name:"Chicken Chilli Single",price:100,cat:"Starters",icon:"🌶️"},
+
+/* CURRIES */
+{name:"Chicken Telangana Curry",price:160,cat:"Curries",icon:"🍛"},
+{name:"Chicken Curry",price:150,cat:"Curries",icon:"🍛"},
+{name:"Paneer Masala",price:180,cat:"Curries",icon:"🧀"},
+{name:"Paneer Curry",price:160,cat:"Curries",icon:"🧀"},
+
+/* OTHERS */
+{name:"Chapathi",price:10,cat:"Others",icon:"🫓"},
+{name:"Corn Fry",price:120,cat:"Others",icon:"🌽"},
+{name:"Fish Fry",price:120,cat:"Others",icon:"🐟"},
+{name:"Boti",price:150,cat:"Others",icon:"🥩"},
+{name:"Head Curry",price:180,cat:"Others",icon:"🍖"}
 ];
 
-let cart = {};
+let cart={};
 
-/* LOAD MENU */
-const menuDiv = document.getElementById("menu");
+function renderMenu(){
+  let search=document.getElementById("search").value.toLowerCase();
+  let html="";
 
-items.forEach((item,i)=>{
-  menuDiv.innerHTML += `
-  <div class="card">
-    <div class="icon">${item.icon}</div>
-    <h4>${item.name}</h4>
-    <div class="price">₹${item.price}</div>
-    
-    <div class="qty">
-      <button onclick="changeQty(${i},-1)">-</button>
-      <span id="qty-${i}">0</span>
-      <button onclick="changeQty(${i},1)">+</button>
-    </div>
-  </div>`;
-});
+  let categories=[...new Set(items.map(i=>i.cat))];
 
-function changeQty(i,change){
+  categories.forEach(cat=>{
+    html+=`<div class="category">${cat}</div><div class="menu">`;
+
+    items.filter(i=>i.cat===cat && i.name.toLowerCase().includes(search))
+    .forEach((item,i)=>{
+      let id=items.indexOf(item);
+
+      html+=`
+      <div class="card">
+        <div class="icon">${item.icon}</div>
+        <div>${item.name}</div>
+        <div class="price">₹${item.price}</div>
+
+        <div class="qty">
+          <button onclick="changeQty(${id},-1)">-</button>
+          <span id="q${id}">${cart[id]?.qty||0}</span>
+          <button onclick="changeQty(${id},1)">+</button>
+        </div>
+      </div>`;
+    });
+
+    html+="</div>";
+  });
+
+  document.getElementById("menu").innerHTML=html;
+}
+
+function changeQty(i,val){
   if(!cart[i]) cart[i]={...items[i],qty:0};
-  cart[i].qty += change;
+  cart[i].qty+=val;
 
-  if(cart[i].qty <=0) delete cart[i];
+  if(cart[i].qty<=0) delete cart[i];
 
-  document.getElementById("qty-"+i).innerText = cart[i]?.qty || 0;
+  renderMenu();
   updateCart();
 }
 
-/* UPDATE CART */
 function updateCart(){
-  let cartHTML="";
-  let total=0;
-
-  Object.values(cart).forEach(item=>{
-    cartHTML += `<div class="cartItem">${item.name} x ${item.qty}</div>`;
-    total += item.price * item.qty;
+  let total=0, html="";
+  Object.values(cart).forEach(i=>{
+    total+=i.qty*i.price;
+    html+=`${i.name} x ${i.qty}<br>`;
   });
 
-  document.getElementById("cartItems").innerHTML = cartHTML || "Cart empty";
-  document.getElementById("total").innerText = "Total: ₹"+total;
+  document.getElementById("cartItems").innerHTML=html||"Cart empty";
+  document.getElementById("total").innerText="Total ₹"+total;
 }
 
-/* PLACE ORDER */
 function placeOrder(){
   let table=document.getElementById("table").value;
-
-  if(!table) return alert("Enter table number");
+  if(!table) return alert("Enter table");
 
   let total=0;
-  Object.values(cart).forEach(i=>{
-    total+=i.price*i.qty;
-  });
+  Object.values(cart).forEach(i=>total+=i.qty*i.price);
 
   db.ref("orders").push({
-    table,
-    items:cart,
-    total,
-    status:"pending",
-    payment:"unpaid",
+    table,items:cart,total,
+    status:"pending",payment:"unpaid",
     time:new Date().toLocaleString()
   });
 
   alert("Order placed!");
   cart={};
-  location.reload();
+  renderMenu();
+  updateCart();
 }
+
+renderMenu();
 </script>
 
 </body>
