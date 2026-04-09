@@ -6,135 +6,102 @@
 <title>Dhawath Restaurant</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
-
 body {
-  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0d0d0d;
   color: #fff;
 }
 
-/* HEADER */
 .header {
-  text-align: center;
   padding: 20px;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  color: #ff8c00;
+  color: #ff7a00;
 }
 
-/* CONTAINER */
-.container {
-  padding: 15px;
+.search {
+  padding: 10px 20px;
 }
-
-/* INPUT */
-input {
+.search input {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border-radius: 12px;
   border: none;
-  margin-bottom: 12px;
-  background: #222;
-  color: #fff;
-  font-size: 15px;
+  background: #1c1c1c;
+  color: white;
 }
 
-/* SECTION */
 .section-title {
-  margin: 15px 0;
-  font-size: 18px;
-  color: #ff8c00;
+  padding: 10px 20px;
+  color: #ff7a00;
+  font-weight: bold;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  padding: 0 20px 100px;
 }
 
-/* CARD */
 .card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 15px;
-  text-align: center;
-  transition: 0.3s;
+  background: #1a1a1a;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
-.card:hover {
-  transform: scale(1.03);
+.card img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
 }
 
-/* PRICE */
-.price {
-  color: #ff8c00;
-  margin: 5px 0;
+.content {
+  padding: 10px;
+}
+
+.title {
+  font-size: 14px;
   font-weight: bold;
 }
 
-/* QTY */
+.price {
+  color: #ff7a00;
+  font-weight: bold;
+}
+
 .qty {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-top: 5px;
 }
 
 .qty button {
-  background: #ff8c00;
+  background: #ff7a00;
   border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 16px;
-  color: #000;
-  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 8px;
 }
 
-/* CART */
-.cart {
-  margin-top: 15px;
-  padding: 15px;
-  border-radius: 15px;
-  background: rgba(255,255,255,0.05);
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-/* FOOTER */
 .footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(90deg, #ff8c00, #ff5e00);
-  padding: 15px;
+  background: #ff7a00;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.total {
-  font-size: 18px;
+  padding: 15px;
+  color: #000;
   font-weight: bold;
 }
 
-.order-btn {
-  background: #000;
-  color: #ff8c00;
+.order {
+  background: black;
+  color: orange;
   border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-weight: bold;
+  padding: 10px;
+  border-radius: 10px;
 }
 </style>
 </head>
@@ -143,100 +110,72 @@ input {
 
 <div class="header">🍽️ Dhawath Restaurant</div>
 
-<div class="container">
-
-<input id="table" placeholder="Enter Table Number">
-<input id="search" placeholder="🔍 Search items..." onkeyup="searchItems()">
-
-<div class="section-title">Biryani</div>
-
-<div class="grid">
-
-<div class="card">
-  <h4>Chicken Biryani</h4>
-  <div class="price">₹140</div>
-  <div class="qty">
-    <button onclick="updateQty('Chicken Biryani',140,-1)">-</button>
-    <span id="Chicken Biryani">0</span>
-    <button onclick="updateQty('Chicken Biryani',140,1)">+</button>
-  </div>
+<div class="search">
+  <input id="search" placeholder="Search food..." onkeyup="searchItems()">
 </div>
 
-<div class="card">
-  <h4>Mutton Biryani</h4>
-  <div class="price">₹220</div>
-  <div class="qty">
-    <button onclick="updateQty('Mutton Biryani',220,-1)">-</button>
-    <span id="Mutton Biryani">0</span>
-    <button onclick="updateQty('Mutton Biryani',220,1)">+</button>
-  </div>
-</div>
-
-<div class="card">
-  <h4>Chicken 65</h4>
-  <div class="price">₹180</div>
-  <div class="qty">
-    <button onclick="updateQty('Chicken 65',180,-1)">-</button>
-    <span id="Chicken 65">0</span>
-    <button onclick="updateQty('Chicken 65',180,1)">+</button>
-  </div>
-</div>
-
-<div class="card">
-  <h4>Cool Drink</h4>
-  <div class="price">₹40</div>
-  <div class="qty">
-    <button onclick="updateQty('Cool Drink',40,-1)">-</button>
-    <span id="Cool Drink">0</span>
-    <button onclick="updateQty('Cool Drink',40,1)">+</button>
-  </div>
-</div>
-
-</div>
-
-<div class="cart">
-  <h3>Cart</h3>
-  <div id="cartItems"></div>
-</div>
-
-</div>
+<div id="menu"></div>
 
 <div class="footer">
-  <div class="total" id="total">₹0</div>
-  <button class="order-btn" onclick="placeOrder()">Place Order</button>
+  <div id="total">₹0</div>
+  <button class="order" onclick="placeOrder()">Place Order</button>
 </div>
 
 <script>
+const items = [
+["Chicken Biryani Single",140],["Chicken Biryani Double",220],["Chicken Biryani Family",520],
+["Fry Piece Biryani Single",160],["Fry Piece Biryani Double",240],["Fry Piece Biryani Family",540],
+["Paneer Biryani Single",160],["Paneer Biryani Double",240],["Paneer Biryani Family",540],
+["Gongura Chicken Biryani Single",160],["Gongura Chicken Biryani Double",240],["Gongura Chicken Biryani Family",540],
+["Egg Biryani",80],
+["Chicken Rice",90],["Egg Rice",70],["Veg Rice",60],["Jeera Rice",80],
+["Egg Noodles",70],["Chicken Noodles",90],["Veg Noodles",60],
+["Chicken Manchuria",150],["Veg Manchuria",80],
+["Egg Burji",100],["Egg 65",110],["Egg Chilli",110],["Egg Manchurian",100],["Egg Keema",100],
+["Chicken Wings (6 pcs)",100],["Chicken Lollipop",150],
+["Chicken Pakodi Full",150],["Chicken Pakodi Single",100],
+["Chicken Roast Full",160],["Chicken Roast Single",100],
+["Chicken 65 Full",160],["Chicken 65 Single",100],
+["Chicken Chilli Full",160],["Chicken Chilli Single",100],
+["Chicken Telangana Curry",160],["Chicken Curry",150],
+["Paneer Masala",180],["Paneer Curry",160],
+["Chapathi",10],["Corn Fry",120],["Fish Fry",120],["Boti",150],["Head",180]
+];
+
 let cart = {};
+
+function renderMenu() {
+  let html = '<div class="grid">';
+  items.forEach(([name, price]) => {
+    html += `
+    <div class="card">
+      <img src="https://source.unsplash.com/300x200/?food">
+      <div class="content">
+        <div class="title">${name}</div>
+        <div class="price">₹${price}</div>
+        <div class="qty">
+          <button onclick="updateQty('${name}',${price},-1)">-</button>
+          <span id="${name}">0</span>
+          <button onclick="updateQty('${name}',${price},1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += "</div>";
+  document.getElementById("menu").innerHTML = html;
+}
 
 function updateQty(name, price, change) {
   if (!cart[name]) cart[name] = { qty: 0, price };
-
   cart[name].qty += change;
   if (cart[name].qty <= 0) delete cart[name];
-
   document.getElementById(name).innerText = cart[name]?.qty || 0;
-  renderCart();
+  renderTotal();
 }
 
-function renderCart() {
+function renderTotal() {
   let total = 0;
-  let html = "";
-
-  Object.keys(cart).forEach(name => {
-    let item = cart[name];
-    let subtotal = item.qty * item.price;
-    total += subtotal;
-
-    html += `
-      <div class="cart-item">
-        <div>${name} x ${item.qty}</div>
-        <div>₹${subtotal}</div>
-      </div>
-    `;
-  });
-
-  document.getElementById("cartItems").innerHTML = html;
+  Object.values(cart).forEach(i => total += i.qty * i.price);
   document.getElementById("total").innerText = "₹" + total;
 }
 
@@ -247,13 +186,47 @@ function searchItems() {
   });
 }
 
+// 🔥 PLACE ORDER WITH FIREBASE
 function placeOrder() {
-  let table = document.getElementById("table").value;
+  let table = prompt("Enter Table Number");
   if (!table) return alert("Enter table number");
   if (Object.keys(cart).length === 0) return alert("Cart empty");
 
-  alert("Order placed for Table " + table);
+  db.collection("orders").add({
+    table: table,
+    items: cart,
+    total: document.getElementById("total").innerText,
+    status: "new",
+    time: new Date()
+  })
+  .then(() => {
+    alert("✅ Order placed!");
+    cart = {};
+    renderTotal();
+    document.querySelectorAll("span").forEach(s => s.innerText = "0");
+  })
+  .catch(err => {
+    alert("Error!");
+    console.error(err);
+  });
 }
+
+renderMenu();
+</script>
+
+<!-- 🔥 FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 </script>
 
 </body>
