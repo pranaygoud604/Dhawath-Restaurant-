@@ -9,70 +9,96 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0;padding-bottom:100px}
+body{
+  font-family:'Poppins';
+  background:#0f0f0f;
+  color:white;
+  margin:0;
+  padding-bottom:90px;
+}
 
 /* HEADER */
 .header{text-align:center;padding:15px}
-.header h1{color:#fc8019}
+.header h2{color:#fc8019}
 
-/* SEARCH */
-.search{
+/* INPUT */
+.input{
   width:90%;
   margin:10px auto;
   display:block;
-  padding:10px;
-  border-radius:8px;
+  padding:12px;
+  border-radius:10px;
   border:none;
 }
 
-/* CATEGORY */
-.category{padding:10px;color:#fc8019}
+/* SECTION */
+.section{
+  padding:10px;
+  color:#fc8019;
+  font-weight:600;
+}
 
 /* MENU */
 .menu{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  grid-template-columns:repeat(2,1fr);
   gap:10px;
   padding:10px;
 }
 
 .card{
   background:#1c1c1c;
-  padding:10px;
-  border-radius:10px;
+  padding:12px;
+  border-radius:12px;
   text-align:center;
 }
 
-.icon{font-size:26px}
+.icon{font-size:24px}
 .price{color:#fc8019}
 
 /* QTY */
-.qty{display:flex;justify-content:center;gap:10px;margin-top:5px}
-.qty button{
-  background:#fc8019;border:none;color:white;
-  border-radius:5px;width:28px;height:28px;
+.qty{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
 }
 
-/* 🛒 MINI CART */
+.qty button{
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:8px;
+  background:#fc8019;
+  color:white;
+}
+
+/* CART BAR */
 .cartBar{
   position:fixed;
   bottom:0;
   width:100%;
   background:#fc8019;
-  padding:12px;
+  padding:14px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
 }
 
-.cartBar span{font-weight:bold}
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+}
+.overlay.active{display:block}
 
-/* 📦 FULL CART */
-.cartPopup{
+/* CART */
+.cart{
   position:fixed;
   bottom:-100%;
-  left:0;
   width:100%;
   height:70%;
   background:#1c1c1c;
@@ -81,15 +107,7 @@ body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0;padding-botto
   display:flex;
   flex-direction:column;
 }
-
-.cartPopup.active{bottom:0}
-
-.cartHeader{
-  padding:15px;
-  text-align:center;
-  font-weight:bold;
-  border-bottom:1px solid #333;
-}
+.cart.active{bottom:0}
 
 .cartItems{
   flex:1;
@@ -97,23 +115,16 @@ body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0;padding-botto
   padding:10px;
 }
 
-.cartItem{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-}
-
-.cartFooter{
+.footer{
   padding:10px;
-  border-top:1px solid #333;
 }
 
 .placeBtn{
   width:100%;
-  padding:10px;
+  padding:12px;
   background:#fc8019;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   color:white;
 }
 </style>
@@ -122,28 +133,25 @@ body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0;padding-botto
 <body>
 
 <div class="header">
-  <h1>🍽️ Dhawath Restaurant</h1>
+  <h2>🍽️ Dhawath Restaurant</h2>
 </div>
 
-<input id="search" class="search" placeholder="Search..." onkeyup="renderMenu()">
-<input id="table" class="search" placeholder="Enter Table Number">
+<input id="table" class="input" placeholder="Enter Table Number">
 
 <div id="menu"></div>
 
-<!-- 🛒 MINI CART -->
-<div class="cartBar" onclick="toggleCart()">
-  <span id="cartCount">0 items</span>
-  <span id="cartTotal">₹0</span>
+<!-- CART -->
+<div class="cartBar" onclick="openCart()">
+  <span id="count">0 items</span>
+  <span id="total">₹0</span>
 </div>
 
-<!-- 📦 FULL CART -->
-<div class="cartPopup" id="cartPopup">
-  <div class="cartHeader">Your Cart</div>
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
 
+<div class="cart" id="cart">
   <div class="cartItems" id="cartItems"></div>
-
-  <div class="cartFooter">
-    <div id="finalTotal">Total ₹0</div>
+  <div class="footer">
+    <div id="final">Total ₹0</div>
     <button class="placeBtn" onclick="placeOrder()">Place Order</button>
   </div>
 </div>
@@ -153,50 +161,107 @@ body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0;padding-botto
 
 <script>
 const firebaseConfig={
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-    authDomain: "dhawath-restaurant.firebaseapp.com",
-    databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+  apiKey:"YOUR_KEY",
+  databaseURL:"YOUR_DB"
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-/* MENU */
-const items=[
-{name:"Chicken Biryani Single",price:140,cat:"Biryani",icon:"🍗"},
-{name:"Chicken Biryani Double",price:220,cat:"Biryani",icon:"🍗"},
-{name:"Egg Biryani",price:80,cat:"Biryani",icon:"🥚"},
-{name:"Chicken Rice",price:90,cat:"Rice",icon:"🍛"},
-{name:"Egg Rice",price:70,cat:"Rice",icon:"🍛"},
-{name:"Chicken Noodles",price:90,cat:"Noodles",icon:"🍜"},
-{name:"Chicken Manchuria",price:150,cat:"Starters",icon:"🍲"},
-{name:"Chicken Curry",price:150,cat:"Curries",icon:"🍛"},
-{name:"Paneer Curry",price:160,cat:"Curries",icon:"🧀"},
-{name:"Chapathi",price:10,cat:"Others",icon:"🫓"},
-{name:"Fish Fry",price:120,cat:"Others",icon:"🐟"}
-];
+/* ALL ITEMS */
+const sections = {
+"Biryani":[
+["Chicken Biryani Single",140],
+["Chicken Biryani Double",220],
+["Chicken Biryani Family",520],
+["Fry Piece Biryani Single",160],
+["Fry Piece Biryani Double",240],
+["Fry Piece Biryani Family",540],
+["Paneer Biryani Single",160],
+["Paneer Biryani Double",240],
+["Paneer Biryani Family",540],
+["Gongura Chicken Biryani Single",160],
+["Gongura Chicken Biryani Double",240],
+["Gongura Chicken Biryani Family",540],
+["Egg Biryani",80]
+],
+
+"Rice":[
+["Chicken Rice",90],
+["Egg Rice",70],
+["Veg Rice",60],
+["Jeera Rice",80]
+],
+
+"Noodles":[
+["Egg Noodles",70],
+["Chicken Noodles",90],
+["Veg Noodles",60]
+],
+
+"Starters":[
+["Chicken Manchuria",150],
+["Veg Manchuria",80],
+["Egg Burji",100],
+["Egg Curry Small",65],
+["Egg Curry Full",110],
+["Egg Chilli",110],
+["Egg Manchurian",100],
+["Egg Keema",100],
+["Chicken Wings",100],
+["Chicken Lollipop",150],
+["Chicken Pakodi Full",150],
+["Chicken Pakodi Single",100],
+["Chicken Roast Full",160],
+["Chicken Roast Single",100],
+["Chicken 65 Full",160],
+["Chicken 65 Single",100],
+["Chicken Chilli Full",160],
+["Chicken Chilli Single",100]
+],
+
+"Curries":[
+["Chicken Telangana Curry",160],
+["Chicken Curry",150],
+["Paneer Masala",180],
+["Paneer Curry",160]
+],
+
+"Others":[
+["Chapathi",10],
+["Corn Fry",120],
+["Fish Fry",120],
+["Boti",150],
+["Head Curry",180]
+]
+};
+
+let items=[];
+Object.values(sections).forEach(sec=>sec.forEach(i=>items.push({name:i[0],price:i[1]})));
 
 let cart={};
 
-/* RENDER MENU */
+/* RENDER */
 function renderMenu(){
-  let search=document.getElementById("search").value.toLowerCase();
   let html="";
+  Object.keys(sections).forEach(sec=>{
+    html+=`<div class="section">${sec}</div><div class="menu">`;
 
-  items.filter(i=>i.name.toLowerCase().includes(search))
-  .forEach((item,i)=>{
+    sections[sec].forEach((item)=>{
+      let index = items.findIndex(i=>i.name===item[0]);
 
-    html+=`
-    <div class="card">
-      <div class="icon">${item.icon}</div>
-      <div>${item.name}</div>
-      <div class="price">₹${item.price}</div>
+      html+=`
+      <div class="card">
+        <div>${item[0]}</div>
+        <div class="price">₹${item[1]}</div>
+        <div class="qty">
+          <button onclick="changeQty(${index},-1)">-</button>
+          <span>${cart[index]?.qty||0}</span>
+          <button onclick="changeQty(${index},1)">+</button>
+        </div>
+      </div>`;
+    });
 
-      <div class="qty">
-        <button onclick="changeQty(${i},-1)">-</button>
-        <span>${cart[i]?.qty||0}</span>
-        <button onclick="changeQty(${i},1)">+</button>
-      </div>
-    </div>`;
+    html+="</div>";
   });
 
   document.getElementById("menu").innerHTML=html;
@@ -206,37 +271,36 @@ function renderMenu(){
 function changeQty(i,val){
   if(!cart[i]) cart[i]={...items[i],qty:0};
   cart[i].qty+=val;
-
   if(cart[i].qty<=0) delete cart[i];
 
-  renderMenu();
   updateCart();
+  renderMenu();
 }
 
-/* UPDATE CART */
+/* CART */
 function updateCart(){
   let total=0,count=0,html="";
-
-  Object.values(cart).forEach((item,i)=>{
-    total+=item.qty*item.price;
-    count+=item.qty;
-
-    html+=`
-    <div class="cartItem">
-      <span>${item.name} x ${item.qty}</span>
-      <span>₹${item.qty*item.price}</span>
-    </div>`;
+  Object.values(cart).forEach(i=>{
+    total+=i.qty*i.price;
+    count+=i.qty;
+    html+=`${i.name} x ${i.qty}<br>`;
   });
 
   document.getElementById("cartItems").innerHTML=html||"Cart empty";
-  document.getElementById("cartTotal").innerText="₹"+total;
-  document.getElementById("cartCount").innerText=count+" items";
-  document.getElementById("finalTotal").innerText="Total ₹"+total;
+  document.getElementById("total").innerText="₹"+total;
+  document.getElementById("count").innerText=count+" items";
+  document.getElementById("final").innerText="Total ₹"+total;
 }
 
-/* TOGGLE CART */
-function toggleCart(){
-  document.getElementById("cartPopup").classList.toggle("active");
+/* CART OPEN */
+function openCart(){
+  document.getElementById("cart").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
+}
+
+function closeCart(){
+  document.getElementById("cart").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
 }
 
 /* ORDER */
@@ -257,7 +321,7 @@ function placeOrder(){
   cart={};
   updateCart();
   renderMenu();
-  toggleCart();
+  closeCart();
 }
 
 renderMenu();
