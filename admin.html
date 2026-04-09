@@ -1,256 +1,344 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dhawath Restaurant</title>
+<title>Dhawath Restaurant Admin</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:'Poppins';background:#0f0f0f;color:white;margin:0}
+*{margin:0;padding:0;box-sizing:border-box;}
 
-/* HEADER */
-.header{text-align:center;padding:15px}
-.header h1{color:#fc8019}
-
-/* SEARCH */
-.search{
-  width:90%;
-  margin:10px auto;
-  display:block;
-  padding:10px;
-  border-radius:8px;
-  border:none;
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0d0d0d;
+  color:white;
 }
 
-/* CATEGORY */
-.category{
+/* 🔥 SIDEBAR */
+.sidebar{
+  width:240px;
+  background:#161616;
+  height:100vh;
+  position:fixed;
+  padding:20px;
+  transition:0.3s;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:600;
+  color:#fc8019;
+  margin-bottom:30px;
+}
+
+.menu a{
+  display:block;
   padding:10px;
+  margin:10px 0;
+  color:#aaa;
+  text-decoration:none;
+  border-radius:8px;
+  transition:0.2s;
+}
+
+.menu a:hover{
+  background:#fc8019;
+  color:white;
+}
+
+/* 🔥 MAIN */
+.main{
+  margin-left:240px;
+}
+
+/* 🔥 TOPBAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#161616;
+  border-bottom:1px solid #222;
+}
+
+.title{
+  font-weight:600;
   color:#fc8019;
 }
 
-/* MENU */
-.menu{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:10px;
-  padding:10px;
+.logoutBtn{
+  background:#ff3b3b;
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+}
+
+.logoutBtn:hover{
+  background:#ff1f1f;
+}
+
+/* 🔥 STATS */
+.stats{
+  display:flex;
+  gap:15px;
+  padding:20px;
+}
+
+.stat{
+  flex:1;
+  background:#1a1a1a;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+}
+
+.stat h3{
+  color:#aaa;
+  font-size:14px;
+}
+
+.stat p{
+  font-size:22px;
+  color:#fc8019;
+  font-weight:bold;
+}
+
+/* 🔥 SECTION */
+.section{
+  padding:10px 20px;
+  color:#fc8019;
+}
+
+/* 🔥 CARDS */
+.container{
+  padding:20px;
 }
 
 .card{
-  background:#1c1c1c;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
+  background:#1a1a1a;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
 }
 
-.icon{font-size:26px}
-
-.price{color:#fc8019}
-
-/* QTY */
-.qty{display:flex;justify-content:center;gap:10px;margin-top:5px}
-.qty button{background:#fc8019;border:none;color:white;border-radius:5px;width:25px}
-
-/* CART */
-.cart{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#1c1c1c;
-  padding:10px;
+.table{
+  color:#fc8019;
+  font-weight:600;
 }
 
-.place{
-  width:100%;
-  background:#fc8019;
-  padding:10px;
+.item{
+  font-size:13px;
+}
+
+.buttons{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.buttons button{
+  flex:1;
+}
+
+button{
+  padding:8px;
   border:none;
-  border-radius:8px;
+  border-radius:6px;
   color:white;
+  cursor:pointer;
+}
+
+.cookBtn{background:#2196f3;}
+.doneBtn{background:#4caf50;}
+.payBtn{background:#ff9800;}
+.deleteBtn{background:#f44336;}
+
+/* 📱 MOBILE */
+@media(max-width:768px){
+
+.sidebar{
+  transform:translateX(-100%);
+  position:absolute;
+}
+
+.sidebar.active{
+  transform:translateX(0);
+}
+
+.main{
+  margin-left:0;
+}
+
+.menuToggle{
+  display:block;
+  cursor:pointer;
+}
+
+.stats{
+  flex-direction:column;
+}
+
+}
+
+.menuToggle{
+  display:none;
+  font-size:18px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>🍽️ Dhawath Restaurant</h1>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">🍽️ Dhawath</div>
+  <div class="menu">
+    <a href="#">Dashboard</a>
+    <a href="#" onclick="openReports()">Reports</a>
+  </div>
 </div>
 
-<input id="search" class="search" placeholder="Search food..." onkeyup="renderMenu()">
+<!-- MAIN -->
+<div class="main">
 
-<input id="table" class="search" placeholder="Enter Table Number">
-
-<div id="menu"></div>
-
-<div class="cart">
-  <div id="cartItems"></div>
-  <div id="total">Total ₹0</div>
-  <button class="place" onclick="placeOrder()">Place Order</button>
+<div class="topbar">
+  <div class="menuToggle" onclick="toggleMenu()">☰</div>
+  <div class="title">Admin Dashboard</div>
+  <button class="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <h3>Orders</h3>
+    <p id="totalOrders">0</p>
+  </div>
+  <div class="stat">
+    <h3>Revenue</h3>
+    <p id="revenue">₹0</p>
+  </div>
+  <div class="stat">
+    <h3>Pending</h3>
+    <p id="pending">₹0</p>
+  </div>
+</div>
+
+<div class="section">💰 Pending Payments</div>
+<div class="container" id="payments"></div>
+
+<div class="section">🔥 Live Orders</div>
+<div class="container" id="orders"></div>
+
+</div>
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
-const firebaseConfig={
-  apiKey:"YOUR_KEY",
-  databaseURL:"YOUR_DB"
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB"
 };
+
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
 
-/* FULL MENU */
-const items=[
-/* BIRYANI */
-{name:"Chicken Biryani Single",price:140,cat:"Biryani",icon:"🍗"},
-{name:"Chicken Biryani Double",price:220,cat:"Biryani",icon:"🍗"},
-{name:"Chicken Biryani Family",price:520,cat:"Biryani",icon:"🍗"},
+const db = firebase.database();
+const auth = firebase.auth();
 
-{name:"Fry Piece Biryani Single",price:160,cat:"Biryani",icon:"🍗"},
-{name:"Fry Piece Biryani Double",price:240,cat:"Biryani",icon:"🍗"},
-{name:"Fry Piece Biryani Family",price:540,cat:"Biryani",icon:"🍗"},
+/* 🔐 AUTH */
+auth.onAuthStateChanged(user=>{
+  if(!user) location.href="login.html";
+});
 
-{name:"Paneer Biryani Single",price:160,cat:"Biryani",icon:"🧀"},
-{name:"Paneer Biryani Double",price:240,cat:"Biryani",icon:"🧀"},
-{name:"Paneer Biryani Family",price:540,cat:"Biryani",icon:"🧀"},
+function logout(){
+  auth.signOut().then(()=>location.href="login.html");
+}
 
-{name:"Gongura Chicken Biryani Single",price:160,cat:"Biryani",icon:"🍗"},
-{name:"Gongura Chicken Biryani Double",price:240,cat:"Biryani",icon:"🍗"},
-{name:"Gongura Chicken Biryani Family",price:540,cat:"Biryani",icon:"🍗"},
+/* 🔥 DATA */
+db.ref("orders").on("value", snap=>{
+  let data=snap.val();
+  if(!data) return;
 
-{name:"Egg Biryani",price:80,cat:"Biryani",icon:"🥚"},
+  let orders=Object.entries(data).reverse();
 
-/* RICE */
-{name:"Chicken Rice",price:90,cat:"Rice",icon:"🍛"},
-{name:"Egg Rice",price:70,cat:"Rice",icon:"🍛"},
-{name:"Veg Rice",price:60,cat:"Rice",icon:"🥗"},
-{name:"Jeera Rice",price:80,cat:"Rice",icon:"🍚"},
+  let total=0, revenue=0, pending=0;
+  let orderHTML="", paymentHTML="";
 
-/* NOODLES */
-{name:"Egg Noodles",price:70,cat:"Noodles",icon:"🍜"},
-{name:"Chicken Noodles",price:90,cat:"Noodles",icon:"🍜"},
-{name:"Veg Noodles",price:60,cat:"Noodles",icon:"🍜"},
+  orders.forEach(([id,o])=>{
+    total++;
 
-/* STARTERS */
-{name:"Chicken Manchuria",price:150,cat:"Starters",icon:"🍲"},
-{name:"Veg Manchuria",price:80,cat:"Starters",icon:"🥦"},
-{name:"Egg Burji",price:100,cat:"Starters",icon:"🥚"},
-{name:"Egg Curry Small",price:65,cat:"Starters",icon:"🍛"},
-{name:"Egg Curry Full",price:110,cat:"Starters",icon:"🍛"},
-{name:"Egg Chilli",price:110,cat:"Starters",icon:"🌶️"},
-{name:"Egg Manchurian",price:100,cat:"Starters",icon:"🍲"},
-{name:"Egg Keema",price:100,cat:"Starters",icon:"🥩"},
+    if(o.payment==="paid") revenue+=o.total||0;
+    else pending+=o.total||0;
 
-{name:"Chicken Wings",price:100,cat:"Starters",icon:"🍗"},
-{name:"Chicken Lollipop",price:150,cat:"Starters",icon:"🍗"},
+    let items="";
+    for(let k in o.items){
+      let it=o.items[k];
+      if(it.qty>0) items+=`<div class="item">${it.name} x ${it.qty}</div>`;
+    }
 
-{name:"Chicken Pakodi Full",price:150,cat:"Starters",icon:"🍗"},
-{name:"Chicken Pakodi Single",price:100,cat:"Starters",icon:"🍗"},
-
-{name:"Chicken Roast Full",price:160,cat:"Starters",icon:"🍗"},
-{name:"Chicken Roast Single",price:100,cat:"Starters",icon:"🍗"},
-
-{name:"Chicken 65 Full",price:160,cat:"Starters",icon:"🍗"},
-{name:"Chicken 65 Single",price:100,cat:"Starters",icon:"🍗"},
-
-{name:"Chicken Chilli Full",price:160,cat:"Starters",icon:"🌶️"},
-{name:"Chicken Chilli Single",price:100,cat:"Starters",icon:"🌶️"},
-
-/* CURRIES */
-{name:"Chicken Telangana Curry",price:160,cat:"Curries",icon:"🍛"},
-{name:"Chicken Curry",price:150,cat:"Curries",icon:"🍛"},
-{name:"Paneer Masala",price:180,cat:"Curries",icon:"🧀"},
-{name:"Paneer Curry",price:160,cat:"Curries",icon:"🧀"},
-
-/* OTHERS */
-{name:"Chapathi",price:10,cat:"Others",icon:"🫓"},
-{name:"Corn Fry",price:120,cat:"Others",icon:"🌽"},
-{name:"Fish Fry",price:120,cat:"Others",icon:"🐟"},
-{name:"Boti",price:150,cat:"Others",icon:"🥩"},
-{name:"Head Curry",price:180,cat:"Others",icon:"🍖"}
-];
-
-let cart={};
-
-function renderMenu(){
-  let search=document.getElementById("search").value.toLowerCase();
-  let html="";
-
-  let categories=[...new Set(items.map(i=>i.cat))];
-
-  categories.forEach(cat=>{
-    html+=`<div class="category">${cat}</div><div class="menu">`;
-
-    items.filter(i=>i.cat===cat && i.name.toLowerCase().includes(search))
-    .forEach((item,i)=>{
-      let id=items.indexOf(item);
-
-      html+=`
+    if(o.status!=="done"){
+      orderHTML+=`
       <div class="card">
-        <div class="icon">${item.icon}</div>
-        <div>${item.name}</div>
-        <div class="price">₹${item.price}</div>
-
-        <div class="qty">
-          <button onclick="changeQty(${id},-1)">-</button>
-          <span id="q${id}">${cart[id]?.qty||0}</span>
-          <button onclick="changeQty(${id},1)">+</button>
+        <div class="table">Table ${o.table}</div>
+        ${items}
+        <div>₹${o.total}</div>
+        <div class="buttons">
+          <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
+          <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
+          <button class="deleteBtn" onclick="deleteOrder('${id}')">Delete</button>
         </div>
       </div>`;
-    });
+    }
 
-    html+="</div>";
+    if(o.status==="done" && o.payment!=="paid"){
+      paymentHTML+=`
+      <div class="card">
+        <div class="table">Table ${o.table}</div>
+        ${items}
+        <div>₹${o.total}</div>
+        <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
+      </div>`;
+    }
   });
 
-  document.getElementById("menu").innerHTML=html;
+  document.getElementById("orders").innerHTML=orderHTML || "No active orders";
+  document.getElementById("payments").innerHTML=paymentHTML || "No pending";
+
+  document.getElementById("totalOrders").innerText=total;
+  document.getElementById("revenue").innerText="₹"+revenue;
+  document.getElementById("pending").innerText="₹"+pending;
+});
+
+/* FUNCTIONS */
+function updateStatus(id,s){
+  db.ref("orders/"+id).update({status:s});
 }
 
-function changeQty(i,val){
-  if(!cart[i]) cart[i]={...items[i],qty:0};
-  cart[i].qty+=val;
-
-  if(cart[i].qty<=0) delete cart[i];
-
-  renderMenu();
-  updateCart();
+function markPaid(id){
+  db.ref("orders/"+id).update({payment:"paid"});
 }
 
-function updateCart(){
-  let total=0, html="";
-  Object.values(cart).forEach(i=>{
-    total+=i.qty*i.price;
-    html+=`${i.name} x ${i.qty}<br>`;
-  });
-
-  document.getElementById("cartItems").innerHTML=html||"Cart empty";
-  document.getElementById("total").innerText="Total ₹"+total;
+function deleteOrder(id){
+  db.ref("orders/"+id).remove();
 }
 
-function placeOrder(){
-  let table=document.getElementById("table").value;
-  if(!table) return alert("Enter table");
-
-  let total=0;
-  Object.values(cart).forEach(i=>total+=i.qty*i.price);
-
-  db.ref("orders").push({
-    table,items:cart,total,
-    status:"pending",payment:"unpaid",
-    time:new Date().toLocaleString()
-  });
-
-  alert("Order placed!");
-  cart={};
-  renderMenu();
-  updateCart();
+function openReports(){
+  location.href="reports.html";
 }
 
-renderMenu();
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
 </script>
 
 </body>
