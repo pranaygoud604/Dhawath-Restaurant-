@@ -6,74 +6,103 @@
 <title>Dhawath Restaurant</title>
 
 <style>
-body {
+* {
   margin: 0;
-  font-family: Arial;
-  background: #000;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
   color: #fff;
 }
 
+/* HEADER */
 .header {
   text-align: center;
-  font-size: 26px;
+  padding: 20px;
+  font-size: 24px;
   font-weight: bold;
-  padding: 15px;
-  color: orange;
+  color: #ff8c00;
 }
 
+/* CONTAINER */
 .container {
   padding: 15px;
 }
 
+/* INPUT */
 input {
   width: 100%;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  background: #222;
+  color: #fff;
+  font-size: 15px;
 }
 
+/* SECTION */
 .section-title {
-  color: orange;
-  margin: 15px 0 10px;
+  margin: 15px 0;
+  font-size: 18px;
+  color: #ff8c00;
 }
 
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
-.menu-item {
-  background: #111;
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   padding: 15px;
-  border-radius: 15px;
   text-align: center;
+  transition: 0.3s;
 }
 
+.card:hover {
+  transform: scale(1.03);
+}
+
+/* PRICE */
 .price {
-  color: orange;
+  color: #ff8c00;
+  margin: 5px 0;
+  font-weight: bold;
 }
 
+/* QTY */
 .qty {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
-  margin-top: 8px;
 }
 
-.btn {
-  background: orange;
+.qty button {
+  background: #ff8c00;
   border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
 }
 
+/* CART */
 .cart {
-  background: #111;
-  padding: 15px;
-  border-radius: 10px;
   margin-top: 15px;
+  padding: 15px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.05);
 }
 
 .cart-item {
@@ -82,23 +111,30 @@ input {
   margin-bottom: 10px;
 }
 
+/* FOOTER */
 .footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: orange;
-  color: #000;
+  background: linear-gradient(90deg, #ff8c00, #ff5e00);
   padding: 15px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
-.place-order {
+.total {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.order-btn {
   background: #000;
-  color: orange;
+  color: #ff8c00;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -109,39 +145,55 @@ input {
 
 <div class="container">
 
-<input type="text" id="table" placeholder="Enter Table Number">
-<input type="text" id="search" placeholder="Search items..." onkeyup="searchItems()">
+<input id="table" placeholder="Enter Table Number">
+<input id="search" placeholder="🔍 Search items..." onkeyup="searchItems()">
 
-<!-- 🍗 CHICKEN BIRYANI -->
-<div class="section-title">Chicken Biryani</div>
+<div class="section-title">Biryani</div>
+
 <div class="grid">
-  <div class="menu-item"><h4>Chicken Biryani Single</h4><div class="price">₹140</div><div class="qty"><button onclick="updateQty('Chicken Biryani Single',140,-1)">-</button><span id="Chicken Biryani Single">0</span><button onclick="updateQty('Chicken Biryani Single',140,1)">+</button></div></div>
-  <div class="menu-item"><h4>Chicken Biryani Double</h4><div class="price">₹220</div><div class="qty"><button onclick="updateQty('Chicken Biryani Double',220,-1)">-</button><span id="Chicken Biryani Double">0</span><button onclick="updateQty('Chicken Biryani Double',220,1)">+</button></div></div>
-  <div class="menu-item"><h4>Chicken Biryani Family</h4><div class="price">₹520</div><div class="qty"><button onclick="updateQty('Chicken Biryani Family',520,-1)">-</button><span id="Chicken Biryani Family">0</span><button onclick="updateQty('Chicken Biryani Family',520,1)">+</button></div></div>
+
+<div class="card">
+  <h4>Chicken Biryani</h4>
+  <div class="price">₹140</div>
+  <div class="qty">
+    <button onclick="updateQty('Chicken Biryani',140,-1)">-</button>
+    <span id="Chicken Biryani">0</span>
+    <button onclick="updateQty('Chicken Biryani',140,1)">+</button>
+  </div>
 </div>
 
-<!-- 🐐 MUTTON -->
-<div class="section-title">Mutton Biryani</div>
-<div class="grid">
-  <div class="menu-item"><h4>Mutton Biryani Single</h4><div class="price">₹220</div><div class="qty"><button onclick="updateQty('Mutton Biryani Single',220,-1)">-</button><span id="Mutton Biryani Single">0</span><button onclick="updateQty('Mutton Biryani Single',220,1)">+</button></div></div>
-  <div class="menu-item"><h4>Mutton Biryani Double</h4><div class="price">₹320</div><div class="qty"><button onclick="updateQty('Mutton Biryani Double',320,-1)">-</button><span id="Mutton Biryani Double">0</span><button onclick="updateQty('Mutton Biryani Double',320,1)">+</button></div></div>
+<div class="card">
+  <h4>Mutton Biryani</h4>
+  <div class="price">₹220</div>
+  <div class="qty">
+    <button onclick="updateQty('Mutton Biryani',220,-1)">-</button>
+    <span id="Mutton Biryani">0</span>
+    <button onclick="updateQty('Mutton Biryani',220,1)">+</button>
+  </div>
 </div>
 
-<!-- 🍗 STARTERS -->
-<div class="section-title">Starters</div>
-<div class="grid">
-  <div class="menu-item"><h4>Chicken 65</h4><div class="price">₹180</div><div class="qty"><button onclick="updateQty('Chicken 65',180,-1)">-</button><span id="Chicken 65">0</span><button onclick="updateQty('Chicken 65',180,1)">+</button></div></div>
-  <div class="menu-item"><h4>Chicken Lollipop</h4><div class="price">₹200</div><div class="qty"><button onclick="updateQty('Chicken Lollipop',200,-1)">-</button><span id="Chicken Lollipop">0</span><button onclick="updateQty('Chicken Lollipop',200,1)">+</button></div></div>
+<div class="card">
+  <h4>Chicken 65</h4>
+  <div class="price">₹180</div>
+  <div class="qty">
+    <button onclick="updateQty('Chicken 65',180,-1)">-</button>
+    <span id="Chicken 65">0</span>
+    <button onclick="updateQty('Chicken 65',180,1)">+</button>
+  </div>
 </div>
 
-<!-- 🥤 DRINKS -->
-<div class="section-title">Drinks</div>
-<div class="grid">
-  <div class="menu-item"><h4>Water Bottle</h4><div class="price">₹20</div><div class="qty"><button onclick="updateQty('Water Bottle',20,-1)">-</button><span id="Water Bottle">0</span><button onclick="updateQty('Water Bottle',20,1)">+</button></div></div>
-  <div class="menu-item"><h4>Cool Drink</h4><div class="price">₹40</div><div class="qty"><button onclick="updateQty('Cool Drink',40,-1)">-</button><span id="Cool Drink">0</span><button onclick="updateQty('Cool Drink',40,1)">+</button></div></div>
+<div class="card">
+  <h4>Cool Drink</h4>
+  <div class="price">₹40</div>
+  <div class="qty">
+    <button onclick="updateQty('Cool Drink',40,-1)">-</button>
+    <span id="Cool Drink">0</span>
+    <button onclick="updateQty('Cool Drink',40,1)">+</button>
+  </div>
 </div>
 
-<!-- 🛒 CART -->
+</div>
+
 <div class="cart">
   <h3>Cart</h3>
   <div id="cartItems"></div>
@@ -149,10 +201,9 @@ input {
 
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
-  <div id="total">₹0</div>
-  <button class="place-order" onclick="placeOrder()">Order</button>
+  <div class="total" id="total">₹0</div>
+  <button class="order-btn" onclick="placeOrder()">Place Order</button>
 </div>
 
 <script>
@@ -170,34 +221,34 @@ function updateQty(name, price, change) {
 
 function renderCart() {
   let total = 0;
-  const container = document.getElementById("cartItems");
-  container.innerHTML = "";
+  let html = "";
 
   Object.keys(cart).forEach(name => {
-    const item = cart[name];
-    const subtotal = item.qty * item.price;
+    let item = cart[name];
+    let subtotal = item.qty * item.price;
     total += subtotal;
 
-    container.innerHTML += `
+    html += `
       <div class="cart-item">
-        <div>${name} x ${item.qty}<br><small>₹${item.price} each</small></div>
+        <div>${name} x ${item.qty}</div>
         <div>₹${subtotal}</div>
       </div>
     `;
   });
 
+  document.getElementById("cartItems").innerHTML = html;
   document.getElementById("total").innerText = "₹" + total;
 }
 
 function searchItems() {
-  const input = document.getElementById("search").value.toLowerCase();
-  document.querySelectorAll(".menu-item").forEach(item => {
-    item.style.display = item.innerText.toLowerCase().includes(input) ? "block" : "none";
+  let input = document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
 }
 
 function placeOrder() {
-  const table = document.getElementById("table").value;
+  let table = document.getElementById("table").value;
   if (!table) return alert("Enter table number");
   if (Object.keys(cart).length === 0) return alert("Cart empty");
 
