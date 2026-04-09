@@ -13,65 +13,76 @@
 
 body{
   font-family:'Poppins',sans-serif;
-  background:#0f0f0f;
+  background:#0d0d0d;
   color:white;
-  display:flex;
 }
 
-/* SIDEBAR */
+/* 🔥 SIDEBAR */
 .sidebar{
-  width:220px;
-  background:#1c1c1c;
+  width:240px;
+  background:#161616;
   height:100vh;
-  padding:20px;
   position:fixed;
+  padding:20px;
+  transition:0.3s;
 }
 
-.sidebar h2{
+.logo{
+  font-size:20px;
+  font-weight:600;
   color:#fc8019;
-  margin-bottom:20px;
+  margin-bottom:30px;
 }
 
-.sidebar a{
+.menu a{
   display:block;
-  color:#aaa;
+  padding:10px;
   margin:10px 0;
+  color:#aaa;
   text-decoration:none;
+  border-radius:8px;
+  transition:0.2s;
 }
 
-.sidebar a:hover{
+.menu a:hover{
+  background:#fc8019;
   color:white;
 }
 
-/* MAIN */
+/* 🔥 MAIN */
 .main{
-  margin-left:220px;
-  width:100%;
+  margin-left:240px;
 }
 
-/* TOPBAR */
+/* 🔥 TOPBAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#161616;
+  border-bottom:1px solid #222;
+}
 
-
-.brand{
-  color:#fc8019;
+.title{
   font-weight:600;
+  color:#fc8019;
 }
 
 .logoutBtn{
   background:#ff3b3b;
+  padding:8px 16px;
   border:none;
-  padding:6px 14px;
   border-radius:6px;
   color:white;
   cursor:pointer;
-  font-size:13px;
-  font-weight:500;
 }
 
 .logoutBtn:hover{
   background:#ff1f1f;
 }
-/* STATS */
+
+/* 🔥 STATS */
 .stats{
   display:flex;
   gap:15px;
@@ -80,26 +91,15 @@ body{
 
 .stat{
   flex:1;
-  background:#1e1e1e;
+  background:#1a1a1a;
   padding:20px;
   border-radius:12px;
   text-align:center;
-  transition:0.2s;
-}
-
-.stat:hover{
-  transform:translateY(-3px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
 }
 
 .stat h3{
-  color:#aaa;.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  background:#1c1c1c;
-  box-shadow:0 2px 10px rgba(0,0,0,0.6);
-  }
+  color:#aaa;
   font-size:14px;
 }
 
@@ -109,41 +109,32 @@ body{
   font-weight:bold;
 }
 
-/* SECTION */
+/* 🔥 SECTION */
 .section{
   padding:10px 20px;
   color:#fc8019;
 }
 
-/* CARDS */
+/* 🔥 CARDS */
 .container{
   padding:20px;
 }
 
 .card{
-  background:#1e1e1e;
+  background:#1a1a1a;
   padding:15px;
   border-radius:12px;
   margin-bottom:15px;
-  transition:0.2s;
-}
-
-.card:hover{
-  transform:translateY(-3px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
 }
 
 .table{
-  font-size:16px;
   color:#fc8019;
+  font-weight:600;
 }
 
 .item{
   font-size:13px;
-  margin:4px 0;
-}
-
-.total{
-  margin-top:8px;
 }
 
 .buttons{
@@ -152,18 +143,16 @@ body{
   margin-top:10px;
 }
 
+.buttons button{
+  flex:1;
+}
+
 button{
   padding:8px;
   border:none;
   border-radius:6px;
-  font-size:12px;
-  cursor:pointer;
   color:white;
-}
-
-/* Only apply flex to action buttons */
-.buttons button{
-  flex:1;
+  cursor:pointer;
 }
 
 .cookBtn{background:#2196f3;}
@@ -174,26 +163,33 @@ button{
 /* 📱 MOBILE */
 @media(max-width:768px){
 
-  body{display:block;}
+.sidebar{
+  transform:translateX(-100%);
+  position:absolute;
+}
 
-  .sidebar{
-    width:100%;
-    height:auto;
-    position:relative;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-  }
+.sidebar.active{
+  transform:translateX(0);
+}
 
-  .sidebar a{display:none;}
+.main{
+  margin-left:0;
+}
 
-  .main{
-    margin-left:0;
-  }
+.menuToggle{
+  display:block;
+  cursor:pointer;
+}
 
-  .stats{
-    flex-direction:column;
-  }
+.stats{
+  flex-direction:column;
+}
+
+}
+
+.menuToggle{
+  display:none;
+  font-size:18px;
 }
 </style>
 </head>
@@ -201,21 +197,22 @@ button{
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar">
-  <h2>🍽️ Dhawath</h2>
-  <a href="#">Dashboard</a>
-  <a href="#" onclick="openReports()">Reports</a>
+<div class="sidebar" id="sidebar">
+  <div class="logo">🍽️ Dhawath</div>
+  <div class="menu">
+    <a href="#">Dashboard</a>
+    <a href="#" onclick="openReports()">Reports</a>
+  </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-  <div class="title">Dhawath Restaurant Admin</div>
-  <div class="actions">
-    <button class="logoutBtn" onclick="logout()">Logout</button>
-  </div>
- </div>
+  <div class="menuToggle" onclick="toggleMenu()">☰</div>
+  <div class="title">Admin Dashboard</div>
+  <button class="logoutBtn" onclick="logout()">Logout</button>
+</div>
 
 <!-- STATS -->
 <div class="stats">
@@ -248,9 +245,9 @@ button{
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyAUV8uk7hdxJKh75SlHukoohTtQ1Wd_qLk",
-  authDomain: "dhawath-restaurant.firebaseapp.com",
-  databaseURL: "https://dhawath-restaurant-default-rtdb.firebaseio.com"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -258,17 +255,16 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
-// 🔐 LOGIN PROTECTION
+/* 🔐 AUTH */
 auth.onAuthStateChanged(user=>{
   if(!user) location.href="login.html";
 });
 
-// 🔓 LOGOUT
 function logout(){
   auth.signOut().then(()=>location.href="login.html");
 }
 
-// 🔥 LIVE ORDERS + REPORT SAVE
+/* 🔥 DATA */
 db.ref("orders").on("value", snap=>{
   let data=snap.val();
   if(!data) return;
@@ -295,7 +291,7 @@ db.ref("orders").on("value", snap=>{
       <div class="card">
         <div class="table">Table ${o.table}</div>
         ${items}
-        <div class="total">₹${o.total}</div>
+        <div>₹${o.total}</div>
         <div class="buttons">
           <button class="cookBtn" onclick="updateStatus('${id}','cooking')">Cooking</button>
           <button class="doneBtn" onclick="updateStatus('${id}','done')">Done</button>
@@ -309,32 +305,21 @@ db.ref("orders").on("value", snap=>{
       <div class="card">
         <div class="table">Table ${o.table}</div>
         ${items}
-        <div class="total">₹${o.total}</div>
+        <div>₹${o.total}</div>
         <button class="payBtn" onclick="markPaid('${id}')">Mark Paid</button>
       </div>`;
     }
   });
 
-  document.getElementById("orders").innerHTML=orderHTML;
-  document.getElementById("payments").innerHTML=paymentHTML;
+  document.getElementById("orders").innerHTML=orderHTML || "No active orders";
+  document.getElementById("payments").innerHTML=paymentHTML || "No pending";
 
   document.getElementById("totalOrders").innerText=total;
   document.getElementById("revenue").innerText="₹"+revenue;
   document.getElementById("pending").innerText="₹"+pending;
-
-  // ✅ SAVE DAILY REPORT (FIXED)
-  let todayKey = new Date().toISOString().split("T")[0];
-
-  db.ref("dailyReports/" + todayKey).update({
-    totalOrders: total,
-    revenue: revenue,
-    pending: pending,
-    lastUpdated: new Date().toLocaleString()
-  });
-
 });
 
-// FUNCTIONS
+/* FUNCTIONS */
 function updateStatus(id,s){
   db.ref("orders/"+id).update({status:s});
 }
@@ -348,7 +333,11 @@ function deleteOrder(id){
 }
 
 function openReports(){
-  window.location.href="reports.html";
+  location.href="reports.html";
+}
+
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
 }
 </script>
 
